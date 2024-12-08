@@ -1,0 +1,1268 @@
+<?php
+//update Query
+$conn = mysqli_connect('localhost','root','','Example_database');
+$fname=$lastname=$address=$mobile=$registration=$college=$gender=$email=$subject=$city=$subjects=[];
+ print_r($_POST);
+
+if (isset($_POST['id'],$_POST['fname'], $_POST['lastname'], $_POST['address'], $_POST['mobile'], $_POST['registration'], $_POST['college'], $_POST['gender'], $_POST['email'], $_POST['subject'], $_POST['city'])) {
+ 
+   
+    $id = $_POST['id'];
+    $fname = $_POST['fname'];
+    $lastname = $_POST['lastname'];
+    $address = $_POST['address'];
+    $mobile = $_POST['mobile'];
+    $registration = $_POST['registration'];
+    $college = $_POST['college'];
+    $gender = $_POST['gender'];
+    $email = $_POST['email'];
+    $subjectArray = $_POST['subject']; 
+    $subject = implode(',', $subjectArray); 
+    $city = $_POST['city'];
+
+    $sql = "UPDATE ajax_second_insert SET 
+            fname = '$fname', 
+            lastname = '$lastname', 
+            address = '$address', 
+            mobile = '$mobile', 
+            registration = '$registration', 
+            college = '$college', 
+            gender = '$gender', 
+            email = '$email', 
+            subject = '$subject', 
+            city = '$city' 
+            WHERE id = '$id'";
+
+   
+    if(mysqli_query($conn, $sql)) {
+        echo "Record updated successfully";
+    } else {
+        echo "Error updating record: " . mysqli_error($conn);
+    }
+
+    
+
+
+if($_POST==true){
+	exit();
+}
+}
+?>
+
+<?php
+//insert Query 
+$conn = mysqli_connect('localhost','root','','Example_database');
+$fname=$lastname=$address=$mobile=$registration=$college=$gender=$email=$subject=$city="";
+if (isset($_POST['fname'], $_POST['lastname'], $_POST['address'], $_POST['mobile'], $_POST['registration'], $_POST['college'], $_POST['gender'], $_POST['email'], $_POST['subject'], $_POST['city'])) {
+ 
+//print_r($_POST);
+$fname=$_POST['fname'];
+$lastname=$_POST['lastname'];
+$address=$_POST['address'];
+$mobile=$_POST['mobile'];
+$registration=$_POST['registration'];
+$college=$_POST['college'];
+$gender=$_POST['gender'];
+$email=$_POST["email"];
+$subject=$_POST["subject"];
+$city=$_POST["city"];
+$subjects = isset($_POST['subject']) ? $_POST['subject'] : array();
+$subjects_string = implode(',', $subjects);
+if(!empty($fname)&& !empty($lastname)&& !empty($address)&& !empty($mobile)&& !empty($registration)&&
+    !empty($college)&& !empty($gender)&& !empty($email)&& !empty($subjects) && !empty($city)) {
+$sql="INSERT INTO ajax_second_insert(fname,lastname,address,mobile,registration,college,gender,email,subject,city) VALUES 
+('$fname','$lastname','$address','$mobile','$registration','$college','$gender','$email','$subjects_string','$city')";
+if (mysqli_query($conn,$sql)) {
+    echo "data inserted";
+
+}else{
+    echo "failed";
+}
+	
+}
+
+if($_POST==true){
+	exit();
+}
+}
+    
+    
+
+?>
+
+<html>
+<head>
+ 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.js"></script>
+
+<script>
+//complete jQuery validation-->
+$(document).ready(function(){
+    // Validation for first name
+    $("#fname_error").hide();
+    let fnameErr = true;
+    $("#fname").keyup(function(){
+        validatefname();
+    });
+    function validatefname(){
+        let fnamevalue = $("#fname").val();
+        let regexfname = /^([a-zA-Z])+$/;
+        if(fnamevalue.length == ""){
+            $("#fname_error").show();
+            fnameErr = false;
+        } else if (!fnamevalue.match(regexfname)){
+            $("#fname_error").show();
+            $("#fname_error").html("*Only alphabets are allowed!");
+            fnameErr = false;
+        } else{
+            $("#fname_error").hide();
+            fnameErr = true;
+        }
+    }
+
+    // Validation for last name
+    $("#lname_error").hide();
+    let lnameErr = true;
+    $("#lastname").keyup(function(){
+        validatelastname();
+    });
+    function validatelastname(){
+        let lastnamevalue = $("#lastname").val();
+        let regexlastname = /^([a-zA-Z])+$/;
+        if(lastnamevalue.length == ""){
+            $("#lname_error").show();
+            lastnameErr = false;
+        } else if (!lastnamevalue.match(regexlastname)){
+            $("#lname_error").show();
+            $("#lname_error").html("*Only alphabets are allowed!");
+            lastnameErr = false;
+        } else{
+            $("#lname_error").hide();
+            lastnameErr = true;
+        }
+    }
+	
+	// Validation for address
+    $("#address_error").hide();
+    let addressErr = true;
+    $("#address").keyup(function(){
+        validateaddress();
+    });
+    function validateaddress(){
+        let addressvalue = $("#address").val();
+        let regexaddress = /^[a-zA-Z0-9 ]+$/;
+        if(addressvalue.length == ""){
+            $("#address_error").show();
+            $("#address_error").html("*Please enter address.");
+            addressErr = false;
+        } else if (!addressvalue.match(regexaddress)){
+            $("#address_error").show();
+            $("#address_error").html("*Only alphabets and digits are allowed!");
+            addressErr = false;
+        } else{
+            $("#address_error").hide();
+            addressErr = true;
+        }
+    }
+// Validation for phone number
+    $("#mobile_error").hide();
+    let mobileErr = true;
+    $("#mobile").keyup(function(){
+        validatemobile();
+    });
+    function validatemobile(){
+        let mobilevalue = $("#mobile").val();
+        let regexmobile = /^([0-9])+$/;
+        if(mobilevalue.length == ""){
+            $("#mobile_error").show();
+            $("#mobile_error").html("*Please enter phone number.");
+            mobileErr = false;
+        } else if (!mobilevalue.match(regexmobile)){
+            $("#mobile_error").show();
+            $("#mobile_error").html("*Only numeric values are allowed!");
+            mobileErr = false;
+        } else if (mobilevalue.length != 10){
+            $("#mobile_error").show();
+            $("#mobile_error").html("*Please enter 10 digits phone number!");
+            mobileErr = false;
+        } else{
+            $("#mobile_error").hide();
+            mobileErr = true;
+        }
+    }
+	
+	
+    
+	    $("#registration_error").hide();
+    let registrationErr = true;
+    $("#registration").keyup(function(){
+        validateregistration();
+    });
+   function validateregistration(){
+        let registrationvalue = $("#registration").val();
+        let regexregistration = /^([0-6])+$/;
+        if(registrationvalue.length == ""){
+            $("#registration_error").show();
+            $("#registration_error").html("*Please enter registration.");
+            registrationErr = false;
+        } else if (!registrationvalue.match(regexregistration)){
+            $("#registration_error").show();
+            $("#registration_error").html("*Only numeric values are allowed!");
+            registrationErr = false;
+        } else if (registrationvalue.length != 6){
+            $("#registration_error").show();
+            $("#registration_error").html("*Please enter 6 digits registration number!");
+            registrationErr = false;
+        } else{
+            $("#registration_error").hide();
+            registrationErr = true;
+        }
+    }
+	 $("#college_error").hide();
+    let collegeErr = true;
+    $("#college").keyup(function(){
+        validatecollege();
+    });
+    function validatecollege(){
+        let collegevalue = $("#college").val();
+        let regexcollege = /^([a-z A-Z])+$/;
+        if(collegevalue.length == ""){
+            $("#college_error").show();
+           collegeErr = false;
+        } else if (!collegevalue.match(regexcollege)){
+            $("#college_error").show();
+            $("#college_error").html("*Only alphabets are allowed!");
+            collegeErr = false;
+        } else{
+            $("#college_error").hide();
+            collegeErr = true;
+        }
+    }
+    // Validation for email
+    $("#email_error").hide();
+    let emailErr = true;
+    $("#email").keyup(function(){
+        validateemail();
+    });
+    function validateemail(){
+        let emailvalue = $("#email").val();
+        let regexemail = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        if(emailvalue.length == ""){
+            $("#email_error").show();
+            $("#email_error").html("*Please enter your email!");
+            emailErr = false;
+        } else if (!emailvalue.match(regexemail)){
+            $("#email_error").show();
+            $("#email_error").html("*Please enter a valid email!");
+            emailErr = false;
+        } else{
+            $("#email_error").hide();
+            emailErr = true;
+        }
+    }
+
+    // Validation for subject
+    $("#checkbox_error").hide();
+    let checkboxErr = true;
+    $(".subject").change(function(){
+        validatecheckbox();
+    });
+    function validatecheckbox(){
+        let checkedcheckbox = $("input[name='subject[]']:checked");
+        if (checkedcheckbox.length == 0) {
+            $("#checkbox_error").show();
+            checkboxErr = false;
+        } else {
+            $("#checkbox_error").hide();
+            checkboxErr = true;
+        }
+    }
+
+    // Validation for gender
+    $("#gender_error").hide();
+    let genderErr = true;
+    $(".gender").change(function(){
+        validategender();
+    });
+    function validategender(){
+        let gendervalue = $(".gender:checked").val();
+        if(gendervalue == null || gendervalue == ""){
+            $("#gender_error").show();
+            genderErr = false;
+        } else{
+            $("#gender_error").hide();
+            genderErr = true;
+        }
+    }
+
+    // Validation for city
+    $("#dropdown_error").hide();
+    let dropdownErr = true;
+    $("#city").change(function(){
+        validatedropdown();
+    });
+    function validatedropdown(){
+        let cityvalue = $("#city").val();
+        if(cityvalue == ""){
+            $("#dropdown_error").show();
+            dropdownErr = false;
+        } else{
+            $("#dropdown_error").hide();
+            dropdownErr = true;
+        }
+    }
+
+    // Form submission
+    $("#submit").click(function(event){
+        event.preventDefault();
+        validatefname();
+        validatelastname();
+        validateaddress();
+        validatemobile();
+        validateregistration();
+        validatecollege();
+        validateemail();
+        validatecheckbox();
+        validategender();
+        validatedropdown();
+
+        if(fnameErr==true && lastnameErr==true && addressErr ==true && mobileErr==true && registrationErr==true && collegeErr ==true && emailErr==true && checkboxErr == true&& genderErr==true && dropdownErr==true){
+            var formdata = $("#myform").serialize();
+            $.ajax({
+                url: "crud_insert.php",
+                method: "POST",
+                data: formdata,
+                success: function (response) {
+					//location:reload();
+                    alert(response);
+                }
+            });
+        }
+    });
+});
+</script>
+
+    <style>
+      
+        .container {
+				
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: silver;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(1, 0, 0, 0.1);
+        }
+ 
+        #show {
+            background-color: yellow;
+            color: black;
+			
+        }
+
+        
+
+       
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            font-weight: bold;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group select {
+            width: 80%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        #fname_error,#lname_error,#address_error,#mobile_error,#registration_error,#college_error,#gender_error,#email_error,#checkbox_error,#dropdown_error{
+            color: red;
+           
+        }
+
+        button[type="submit"] {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+           cursor: pointer;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+    </style>
+	
+</head>
+<body>
+<!--Html insert Form--> 
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand">CRUD Operations</a>
+        </div>
+        <ul class="nav navbar-nav">
+            <li><a href="#" id="show">Show Database Details</a></li>
+            <li><a href="#" id="show_update_form">Show Update Form</a></li>
+            <li><a href="#" id="hide_update_form">Hide Update Form</a></li>
+        </ul>
+    </div>
+</nav>
+<div id="di" class="container">
+
+    <h2>Ajax HTML Form</h2>
+    <form id="myform" method="POST">
+        <div class="form-group">
+            <label for="fname">First Name:</label>
+            <input type="text" id="fname" name="fname" placeholder="Enter First Name">
+         <span id="fname_error">*First name is required!</span>
+        </div>
+
+        <div class="form-group">
+            <label for="lname">Last Name:</label>
+            <input type="text" id="lastname" name="lastname" placeholder="Enter Last Name">
+            <span id="lname_error">Last name required!</span>
+        </div>
+
+        <div class="form-group">
+            <label for="address">Address:</label>
+            <input type="text" id="address" name="address" placeholder="Enter Address">
+            <span id="address_error">Enter address!</span>
+        </div>
+
+        <div class="form-group">
+            <label for="mobile">Mobile No:</label>
+            <input type="text" id="mobile" name="mobile" placeholder="Enter Mobile No">
+            <span id="mobile_error">Enter mobile no!</span>
+        </div>
+
+        <div class="form-group">
+            <label for="registration">Registration:</label>
+            <input type="text" id="registration" name="registration" placeholder="Enter Registration No">
+            <span id="registration_error">Enter registration!</span>
+        </div>
+
+        <div class="form-group">
+            <label for="college">College:</label>
+            <input type="text" id="college" name="college" placeholder="Enter College name">
+            <span id="college_error">Enter College!</span>
+        </div>
+
+        <div class="form-group">
+            <label>Gender:</label>
+            <input type="radio" id="male" name="gender" value="male" class="gender">
+            <label for="male">Male</label>
+            <input type="radio" id="female" name="gender" value="female" class="gender">
+            <label for="female">Female</label>
+            <span id="gender_error">Enter a gender!</span>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" placeholder="Enter Email">
+            <span id="email_error">Enter Email!</span>
+        </div>
+
+        <div class="form-group">
+            <label>Subject:</label>
+            <input type="checkbox" id="hindi" name="subject[]" value="Hindi" class="subject">
+            <label for="hindi">Hindi</label>
+            <input type="checkbox" id="english" name="subject[]" value="English" class="subject">
+            <label for="english">English</label>
+            <input type="checkbox" id="math" name="subject[]" value="Math" class="subject">
+            <label for="math">Math</label>
+            <span id="checkbox_error">Enter Subject</span>
+        </div>
+
+        <div class="form-group">
+            <label for="city">Choose a City:</label>
+            <select name="city" id="city">
+                <option value="">--select--</option>
+                <option value="Delhi">Delhi</option>
+                <option value="Saharanpur">Saharanpur</option>
+                <option value="Meerut">Meerut</option>
+                <option value="Dehradun">Dehradun</option>
+            </select>
+            <span id="dropdown_error">Enter a city!</span>
+        </div>
+
+        <button type="submit" id="submit" name="submit">Submit</button>
+    </form>
+</div>
+
+
+
+</body>
+</html>
+<br>
+
+        <html>
+        <head>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+        table {
+		
+            width: 100%;
+           
+            margin: auto;
+        }
+
+        td {
+            background-color: silver;
+            font-size: 15px;
+            border-radius: 2px;
+            line-height: 15px;
+            padding: 5px;
+            text-align: center;
+        }
+
+        th {
+            color: black;
+            border: 2px solid #f2f2f2;
+            padding: 7px;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            text-align: center;
+        }
+
+        .modal-button {
+            margin: 10px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+		.main_table{
+			margin-top:-30px;
+		}
+		
+
+		
+    </style>
+</head>
+<body>
+
+<script>
+//fetch ajax request 
+$(document).ready(function() {                
+	        $.ajax({
+            url:"crud_insert.php",
+            })
+            .done(function(response) {
+				
+	        $("#response_page").html(response); 
+           //location.load();
+          //  alert(response);			 
+            });
+           
+
+	 });
+
+$(document).ready(function(){
+  $("#show").click(function(){
+    $("table").toggle();
+    $("h1").toggle();
+		  $("#di").hide();
+  });
+
+});
+
+
+ 
+ 
+ $(document).ready(function() {  
+	  $("table").hide();
+	  $("h1").hide();
+
+});	
+
+
+</script>
+</body>
+</html>
+
+<html>
+<body>
+<!-- fetch data -->
+<div class="main_table">
+<table style="background-color:red"  border="4px solid black">
+<h1 style="text-align:center">Display data</h1>
+<tr>
+<th>id</th>
+<th>firsname</th>
+<th>lastname</th>
+<th>address</th>
+<th>mobile</th>
+<th>registration</th>
+<th>college</th>
+<th>gender</th>
+<th>email</th>
+<th>subject</th>
+<th>city</th>
+<th colspan="2">Action</th>
+</tr>
+
+<?php
+
+$conn = mysqli_connect('localhost','root','','Example_database');
+
+$sql = "SELECT * FROM ajax_second_insert";
+$select = mysqli_query($conn,$sql);
+while ($d = mysqli_fetch_assoc($select)) {
+        ?>
+		<tr class="main<?php echo $d['id'];?>">
+		<td><?php echo $d['id'];?></td>
+		<td><?php echo $d['fname'];?></td>
+		<td><?php echo $d['lastname'];?></td>
+		<td><?php echo $d['address'];?></td>
+		<td><?php echo $d['mobile'];?></td>
+		<td><?php echo $d['registration'];?></td>
+		<td><?php echo $d['college'];?></td>
+		<td><?php echo $d['gender'];?></td>
+		<td><?php echo $d['email'];?></td>
+		<td><?php echo $d['subject'];?></td>
+		<td><?php echo $d['city'];?></td>
+		<td><button style="background-color:red"; class="delete-button" data-id="<?php echo $d['id']; ?>"><strong>Delete</strong></button></td>
+        <td><button style="background-color:yellow"; class="update" data-id="<?php echo $d['id']; ?>"><strong>Update</strong></button></td>
+		</tr>
+
+		<?php
+		
+}
+?>
+
+
+</div>
+
+
+
+
+
+</table>
+
+
+</body>
+</html>
+<script>
+<?php
+//delete query
+if(isset($_POST["delete_id"])) {
+  
+    $conn = mysqli_connect('localhost','root','','Example_database');
+    
+
+    $id = $_POST["delete_id"];
+
+
+    $result = "DELETE FROM ajax_second_insert WHERE id=$id";
+
+ 
+    $run = mysqli_query($conn, $result);
+
+
+    if ($run) {
+        echo "delete id successfully";
+    } else {
+        echo "error deleted";
+    }
+
+
+    exit();
+}
+?>
+//delete ajax request
+$(document).ready(function(){
+   
+    $(".delete-button").click(function(){
+    var delete_id = $(this).data("id");
+    var x = confirm(delete_id+"-Are you sure you want to delete this id?");
+	    if (x) {	
+        // AJAX request to delete the item
+        $.ajax({
+            type:"POST",
+            url: "crud_insert.php", 
+			data: {delete_id: delete_id},// Pass the ID of the item to be deleted
+              success: function(response) {
+               
+                    $(".main" + delete_id).remove();
+
+            }
+        });
+		}
+    });
+});
+//update ajax request
+ $(document).ready(function(){
+	 
+    $('.update').click(function(ev){
+		
+        ev.preventDefault(); // Prevent default click behavior
+		
+        var id = $(this).attr('data-id');
+       
+        var v = confirm(id+"-Are you sure you want to update?");
+	    if (v) {	
+        $.ajax({ 
+            type: "POST",
+            url: "crud_insert.php", 
+            data: { id: id },
+            success: function(response){
+				
+                // Replace current content with update form
+                $('body').html(response);
+				   $('#di').hide();
+				
+            },
+			
+		
+            error: function(xhr, status, error){
+                alert("Error loading update form. Please try again.");
+            }
+			});
+		}
+    
+    });
+	
+});
+
+  
+
+
+</script>
+
+
+<html>
+<head>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.js"></script>
+
+<script>
+$(document).ready(function(){
+    // Validation for first name
+	let id = $("#id").val();
+    $("#fname_err").hide();
+    let fnameErr = true;
+    $("#fname_f").keyup(function(){
+        validatefname();
+    });
+    function validatefname(){
+        let fnamevalue = $("#fname_f").val();
+        let regexfname = /^([a-zA-Z])+$/;
+        if(fnamevalue.length == ""){
+            $("#fname_err").show();
+            fnameErr = false;
+        } else if (!fnamevalue.match(regexfname)){
+            $("#fname_err").show();
+            $("#fname_err").html("*Only alphabets are allowed!");
+            fnameErr = false;
+        } else{
+            $("#fname_err").hide();
+            fnameErr = true;
+        }
+    }
+
+    // Validation for last name
+    $("#lname_err").hide();
+    let lnameErr = true;
+    $("#lastname_l").keyup(function(){
+        validatelastname();
+    });
+    function validatelastname(){
+        let lastnamevalue = $("#lastname_l").val();
+        let regexlastname = /^([a-zA-Z])+$/;
+        if(lastnamevalue.length == ""){
+            $("#lname_err").show();
+            lastnameErr = false;
+        } else if (!lastnamevalue.match(regexlastname)){
+            $("#lname_err").show();
+            $("#lname_err").html("*Only alphabets are allowed!");
+            lastnameErr = false;
+        } else{
+            $("#lname_err").hide();
+            lastnameErr = true;
+        }
+    }
+	
+	// Validation for address
+    $("#address_err").hide();
+    let addressErr = true;
+    $("#address_a").keyup(function(){
+        validateaddress();
+    });
+    function validateaddress(){
+        let addressvalue = $("#address_a").val();
+        let regexaddress = /^[a-zA-Z0-9 ]+$/;
+        if(addressvalue.length == ""){
+            $("#address_err").show();
+            $("#address_err").html("*Please enter address.");
+            addressErr = false;
+        } else if (!addressvalue.match(regexaddress)){
+            $("#address_err").show();
+            $("#address_err").html("*Only alphabets and digits are allowed!");
+            addressErr = false;
+        } else{
+            $("#address_err").hide();
+            addressErr = true;
+        }
+    }
+// Validation for phone number
+    $("#mobile_err").hide();
+    let mobileErr = true;
+    $("#mobile_m").keyup(function(){
+        validatemobile();
+    });
+    function validatemobile(){
+        let mobilevalue = $("#mobile_m").val();
+        let regexmobile = /^([0-9])+$/;
+        if(mobilevalue.length == ""){
+            $("#mobile_err").show();
+            $("#mobile_err").html("*Please enter phone number.");
+            mobileErr = false;
+        } else if (!mobilevalue.match(regexmobile)){
+            $("#mobile_err").show();
+            $("#mobile_err").html("*Only numeric values are allowed!");
+            mobileErr = false;
+        } else if (mobilevalue.length != 10){
+            $("#mobile_err").show();
+            $("#mobile_err").html("*Please enter 10 digits phone number!");
+            mobileErr = false;
+        } else{
+            $("#mobile_err").hide();
+            mobileErr = true;
+        }
+    }
+	
+	
+    
+	    $("#registration_err").hide();
+    let registrationErr = true;
+    $("#registration_r").keyup(function(){
+        validateregistration();
+    });
+   function validateregistration(){
+        let registrationvalue = $("#registration_r").val();
+        let regexregistration = /^([0-6])+$/;
+        if(registrationvalue.length == ""){
+            $("#registration_err").show();
+            $("#registration_err").html("*Please enter registration.");
+            registrationErr = false;
+        } else if (!registrationvalue.match(regexregistration)){
+            $("#registration_err").show();
+            $("#registration_err").html("*Only numeric values are allowed!");
+            registrationErr = false;
+        } else if (registrationvalue.length != 6){
+            $("#registration_err").show();
+            $("#registration_err").html("*Please enter 6 digits registration number!");
+            registrationErr = false;
+        } else{
+            $("#registration_err").hide();
+            registrationErr = true;
+        }
+    }
+	 $("#college_err").hide();
+    let collegeErr = true;
+    $("#college_c").keyup(function(){
+        validatecollege();
+    });
+    function validatecollege(){
+        let collegevalue = $("#college_c").val();
+        let regexcollege = /^([a-z A-Z])+$/;
+        if(collegevalue.length == ""){
+            $("#college_err").show();
+           collegeErr = false;
+        } else if (!collegevalue.match(regexcollege)){
+            $("#college_err").show();
+            $("#college_err").html("*Only alphabets are allowed!");
+            collegeErr = false;
+        } else{
+            $("#college_err").hide();
+            collegeErr = true;
+        }
+    }
+	//gender validation
+	 $("#gender_err").hide();
+    let genderErr = true;
+    $(".gender_g").change(function(){
+        validategender();
+    });
+    function validategender(){
+        let gendervalue = $(".gender_g:checked").val();
+        if(gendervalue == null || gendervalue == ""){
+            $("#gender_err").show();
+            genderErr = false;
+        } else{
+            $("#gender_err").hide();
+            genderErr = true;
+        }
+    }
+
+    // Validation for email
+    $("#email_err").hide();
+    let emailErr = true;
+    $("#email_e").keyup(function(){
+        validateemail();
+    });
+    function validateemail(){
+        let emailvalue = $("#email_e").val();
+        let regexemail = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        if(emailvalue.length == ""){
+            $("#email_err").show();
+            $("#email_err").html("*Please enter your email!");
+            emailErr = false;
+        } else if (!emailvalue.match(regexemail)){
+            $("#email_err").show();
+            $("#email_err").html("*Please enter a valid email!");
+            emailErr = false;
+        } else{
+            $("#email_err").hide();
+            emailErr = true;
+        }
+    }
+
+    // Validation for subject
+    $("#checkbox_err").hide();
+    let checkboxErr = true;
+    $(".subject_s").change(function(){
+        validatecheckbox();
+    });
+    function validatecheckbox(){
+        let checkedcheckbox = $("input[name='subject[]']:checked");
+        if (checkedcheckbox.length == 0) {
+            $("#checkbox_err").show();
+            checkboxErr = false;
+        } else {
+            $("#checkbox_err").hide();
+            checkboxErr = true;
+        }
+    }
+
+    // Validation for gender
+   
+    // Validation for city
+    $("#dropdown_err").hide();
+    let dropdownErr = true;
+    $("#city_c").change(function(){
+        validatedropdown();
+    });
+    function validatedropdown(){
+        let cityvalue = $("#city_c").val();
+        if(cityvalue == ""){
+            $("#dropdown_err").show();
+            dropdownErr = false;
+        } else{
+            $("#dropdown_err").hide();
+            dropdownErr = true;
+        }
+    }
+
+    // Form submission
+    $("#submit_button").click(function(event){
+        event.preventDefault();
+        validatefname();
+        validatelastname();
+        validateaddress();
+        validatemobile();
+        validateregistration();
+        validatecollege();
+        validateemail();
+        validatecheckbox();
+        validategender();
+        validatedropdown();
+
+    if(fnameErr==true && lastnameErr==true && addressErr ==true && mobileErr==true && registrationErr==true && collegeErr ==true && emailErr==true && checkboxErr == true&& genderErr==true && dropdownErr==true){
+	let fname = $("#fname_f").val();
+    let lastname = $("#lastname_l").val();
+    let address = $("#address_a").val();
+    let mobile = $("#mobile_m").val();
+    let registration = $("#registration_r").val();
+    let college = $("#college_c").val();
+    let gender = $("input[name=gender]:checked").val();
+    let email = $("#email_e").val();
+    let subject = [];
+    $("input[name='subject[]']:checked").each(function() {
+        subject.push($(this).val());
+    });
+    let city = $("#city_c").val();
+            let formdata = $("#form").serialize();
+			$.ajax({
+               type: "POST",
+               url: "crud_insert.php",
+               data: {
+		    id:id,
+            fname: fname,
+            lastname: lastname,
+            address: address,
+            mobile: mobile,
+            registration:registration,	
+            college: college,
+            gender: gender,	
+            email: email,
+            subject: subject,
+            city: city
+			   }, 
+               success: function(response){
+                   alert(response);
+                  $('#yourElement').load('crud_insert.php'); 
+               },
+               error: function(xhr, status, error){
+                   console.error(xhr.responseText); 
+               }
+           });
+           
+        }
+    });
+});
+
+</script>
+
+
+    <style>
+     
+	
+        .container_r {
+				
+           width:40%;
+          
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+           
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            font-weight: bold;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        #fname_err,#lname_err,#address_err,#mobile_err,#registration_err,#college_err,#gender_err,#email_err,#checkbox_err,#dropdown_err{
+            color: red;
+           
+        }
+
+        button[type="submit"] {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+           cursor: pointer;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+
+	
+		
+		#show_update_form{
+			 margin-top:0%;
+			margin-left:90px;
+			background-color:red;
+			color:black;
+			
+		}
+		#hide_update_form{
+			margin-left:100px;
+			background-color:blue;
+			color:black;
+		}
+    </style>
+</head>
+<body>
+<script>
+ $(document).ready(function(){
+  $("#show_update_form").click(function(){
+    $("#form").show();
+	 $("h3").show();
+    
+  });
+
+  $("#hide_update_form").click(function(){
+    $("#form").hide();
+	 $("h3").hide();
+   
+  });
+  
+});
+
+ $(document).ready(function() {  
+	  $("#form").hide();
+	  $("h3").hide();
+});	
+
+</script>
+
+<?php
+// Database connection
+$conn = mysqli_connect('localhost', 'root', '', 'Example_database');
+
+// Initialize variables
+$fname = $lastname = $address = $mobile = $registration = $college = $gender = $email = $city = "";
+$subjects = []; // Initialize $subjects as an empty array
+
+// Check if the form is submitted
+if(isset($_POST['id'])){
+    $id = $_POST['id'];
+
+    // Fetch data from the database based on the ID
+    $select = "SELECT * FROM ajax_second_insert WHERE id='$id'";
+    $query = mysqli_query($conn, $select);
+
+    // Check if data is found
+    if(mysqli_num_rows($query) > 0){
+        $fetch = mysqli_fetch_assoc($query);
+        $fname = $fetch['fname'];
+        $lastname = $fetch['lastname'];
+        $address = $fetch['address'];
+        $mobile = $fetch['mobile'];
+        $registration = $fetch['registration'];
+        $college = $fetch['college'];
+        $gender = $fetch['gender'];
+        $email = $fetch['email'];
+        $city = $fetch['city'];
+        
+        // Fetch subjects from the database or any other source and populate $subjects
+        $k = $fetch['subject'];
+        $subjects = explode(',', $k);
+    }
+}
+?>
+<br>
+
+<div id="yourElement">
+<div class="container_r">
+    <h3>Ajax HTML Update Form</h3>
+
+    <form id="form" method="">
+	
+        <div class="form-group">
+		
+            <label for="fname">First Name:</label>
+			<input type="hidden" id="id" name="id" value="<?=$id?>">
+            <input type="text" id="fname_f" name="fname" placeholder="Enter First Name" value="<?=$fname?>">
+         <span id="fname_err">*First name is required!</span>
+        </div>
+
+        <div class="form-group">
+            <label for="lname">Last Name:</label>
+            <input type="text" id="lastname_l" name="lastname" placeholder="Enter Last Name" value="<?=$lastname?>">
+            <span id="lname_err">Last name required!</span>
+        </div>
+
+        <div class="form-group">
+            <label for="address">Address:</label>
+            <input type="text" id="address_a" name="address" placeholder="Enter Address" value="<?=$address?>">
+            <span id="address_err">Enter address!</span>
+        </div>
+
+        <div class="form-group">
+            <label for="mobile">Mobile No:</label>
+            <input type="text" id="mobile_m" name="mobile" placeholder="Enter Mobile No" value="<?=$mobile?>">
+            <span id="mobile_err">Enter mobile no!</span>
+        </div>
+
+        <div class="form-group">
+            <label for="registration">Registration:</label>
+            <input type="text" id="registration_r" name="registration" placeholder="Enter Registration No" value="<?=$registration?>">
+            <span id="registration_err">Enter registration!</span>
+        </div>
+
+        <div class="form-group">
+            <label for="college">College:</label>
+            <input type="text" id="college_c" name="college" placeholder="Enter College name" value="<?=$college?>">
+            <span id="college_err">Enter College!</span>
+        </div>
+
+        <div class="form-group">
+            <label for="gender">Gender:</label>
+            <label>Male:</label>
+                <input type="radio"  name="gender" class="gender_g" value="male" <?php if(isset($gender) && $gender=="male") echo "checked"; ?>>
+
+                <label>Female:</label>
+                <input type="radio" name="gender" class="gender_g" value="female" <?php if(isset($gender) && $gender=="female") echo "checked"; ?>>
+            <span id="gender_err">Enter a gender!</span>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email_e" name="email" placeholder="Enter Email" value="<?=$email?>">
+            <span id="email_err">Enter Email!</span>
+        </div>
+
+        <div class="form-group">
+                      <label>Subject:</label>
+            
+                <label>Hindi</label>
+                <input type="checkbox" name="subject[]"  id="subject_s" value="Hindi" <?php if(in_array("Hindi",$subjects)) echo "checked"; ?>>
+                <label>English</label>
+                <input type="checkbox" name="subject[]"  id="subject_s" value="English" <?php if(in_array("English",$subjects)) echo "checked"; ?>>
+                <label>Math</label>
+                <input type="checkbox"  name="subject[]" id="subject_s" value="Math" <?php if(in_array("Math",$subjects)) echo "checked"; ?>>
+                <span id="checkbox_err">please enter subject</span>
+        </div>
+
+        <div class="form-group">
+            <label for="city">Choose a City:</label>
+            <select name="city" id="city_c">
+                <option value="">--select--</option>
+                    <option name="city" value="Delhi" <?php if(isset($city) && $city=="Delhi") echo "selected"; ?>>Delhi</option>
+                    <option name="city" value="Saharanpur" <?php if(isset($city) && $city=="Saharanpur") echo "selected"; ?>>Saharanpur</option> 
+                    <option name="city" value="Meerut" <?php if(isset($city) && $city=="Meerut") echo "selected"; ?>>Meerut</option>
+                    <option name="city" value="Dehradun" <?php if(isset($city) && $city=="Dehradun") echo "selected"; ?>>Dehradun</option>
+           
+            </select>
+            <span id="dropdown_err">Enter a city!</span>
+        </div>
+
+        <button type="submit" id="submit_button" name="submit">Submit</button>
+    </form>
+</div>
+
+</div>
+</body>
+</html>
+
