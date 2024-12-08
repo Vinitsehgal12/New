@@ -1,0 +1,694 @@
+<!--<?Php Intsert Form-->
+
+
+<html>
+<head>
+<style>
+
+
+.error{
+	color:red;
+	font-size:10px;
+}
+.main h2{
+	margin-top:-2px;
+}
+</style>
+</head>
+<body>
+
+<?Php
+
+echo "<div class='tab'>";
+$fname= $lname= $address= $email= $gender=$mobile=$subject= $city=$file=$file_name=$upload=$password=$c="";
+$fnameErr= $lnameErr= $addressErr= $emailErr= $genderErr= $mobileErr= $subjectErr=$cityErr=$imageErr=$passwordErr="";
+if(isset($_POST['submit'])){
+if(empty($_POST['fname'])){
+$fnameErr=" * First name Required";}
+	elseif (!preg_match("/^[a-zA-Z]*$/", $_POST["fname"])){
+		 $fnameErr = " * Only Letters allowed";}
+	
+else{
+	$fname=$_POST['fname'];
+	echo "Your Name : " . " $fname "  . " $lname ";
+}
+	
+if(empty($_POST['lname'])){
+$lnameErr = " * Last name Required";}
+	elseif (!preg_match("/^[a-zA-Z]*$/", $_POST["lname"])){
+		 $lnameErr = " * Only Letters allowed";}
+
+else{
+	$lname = $_POST['lname'];
+	echo $lname."<br>";
+	
+}
+
+if(empty($_POST['address'])){
+$addressErr = " * Address Required";}
+	elseif (!preg_match("/^[a-z A-Z]*$/", $_POST["address"])){
+		 $addressErr = " * Only Letters allowed";}
+	
+else{
+	$address = $_POST['address'];
+	echo "Your Address : " . $address."<br>";
+	
+}
+if(empty($_POST['email'])){
+	$emailErr = " * Email Required";
+	
+}else{
+		echo "Your Email : " . $email  = $_POST["email"];
+		echo "<br>";
+
+	if(!preg_match("/([\w\-]+\@[\w\-]+\.[\w\-]+)/",$email)) {
+	$emailErr = " Invalid email format";
+}
+}
+	 if (empty($_POST["mobile"])){
+	 $mobileErr = "*Mobile No is required";}
+	 elseif(!preg_match ("/^[0-9]{10}+$/", $_POST["mobile"])){
+	 $mobileErr = "*Only 10 digit number";}
+	 else{
+	 $mobile = $_POST["mobile"];
+	 echo "Mobile No : ".$mobile;
+	 echo"<br>";
+	 }
+ 	
+
+if(empty($_POST['gender'])){
+	$genderErr = " * Gender Required";
+}else{
+	echo "Gender : " .$gender= $_POST["gender"];
+	echo"<br>";
+	if ($gender==$genderErr){
+	}else if($gender==$genderErr){
+		
+	}
+	}
+	if(isset($_POST['subject'])){
+if (!empty($_POST['subject'])) {
+    $subject = $_POST['subject'];
+    if (count($subject) >= 2) {
+        
+		$c = implode(",", $subject);
+        echo "Subject: " . $c;
+    } else {
+        $subjectErr = "*Please select at least two subjects";
+        
+    }
+} else {
+    $subjectErr = "*Please Enter Subject";
+    
+}
+	}
+    if (empty($_POST['password'])) {
+        $passwordErr = " * Password Required";
+    } elseif (strlen($_POST['password']) < 8) {
+        $passwordErr = " * Password must be at least 8 characters long";
+    } else {
+        $password = $_POST['password'];
+        // Proceed with the rest of your form processing
+    }	
+if(empty($_POST['city'])){
+	$cityErr = " * City Required";
+}else{
+	$city = $_POST['city'];
+	echo "Your City : " . $city;
+	echo"<br>";
+}
+  if(empty($_FILES['file']['name'])){
+	 $imageErr = " * File Required";
+ }else{
+if(isset($_FILES['file'])){
+   	     $file_name = $_FILES['file']['name'];
+            $file_type = $_FILES['file']['type'];
+            $file_tmp = $_FILES['file']['tmp_name'];
+            $file_size = $_FILES['file']['size'];
+            $upload = pathinfo($_FILES["file"]["name"], PATHINFO_EXTENSION);
+            $allowed_extensions = array('jpg', 'png', 'gif');
+
+            if ($file_size > 2097152) {
+                $imageErr = "*File size is too large. Maximum 2MB allowed.";
+            } elseif (!in_array($upload, $allowed_extensions)) {
+                $imageErr = "*Only jpg, png, gif files are allowed";
+            } else {
+                $folder_2 = "folder_2/" . $file_name;
+                if (move_uploaded_file($file_tmp, $folder_2)) {
+                    // File upload successful
+                } else {
+                    $imageErr = "*Failed to upload file";
+                }
+            }
+        }
+
+}
+}
+
+echo "</div>";
+$conn= mysqli_connect("localhost","root","","vinit");
+if($fname!=="" && $lname!=="" && $address!=="" && $mobile!=="" && $email!=="" && $gender!=="" && $subject!=="" &&  $password!=="" && $file_name!==""){
+$sql = "INSERT INTO crud_insert(fname,lname,address,email,mobile,gender,subject,password,city,file)values
+('$fname','$lname','$address','$email','$mobile','$gender','$c','$password','$city','$file_name')";
+if(mysqli_query($conn,$sql)){
+	echo "<div style='margin-left:40%;color:red;'>data created successfully</div>
+";
+}else{
+	echo "date not created";
+}
+}
+
+
+?>
+<form action="" method="POST" enctype="multipart/form-data">
+<div class="main">
+<table>
+<tr>
+<h2>PHP CRUD INSERT FORM</h2>
+<td><label>First Name:</label></td>
+<td><input type="text" name="fname" value="<?php echo $fname;?>"><span class="error"><?php echo "$fnameErr";?></span></td></tr><tr>
+<td><label>Last Name:</label></td>
+<td><input type="text" name="lname" value="<?=$lname?>"><span class="error"><?php echo $lnameErr;?></td></tr>
+<td><label>Address:</label></td>
+<td><input type="address" name="address" value="<?=$address?>"><span class="error"><?php echo $addressErr;?></span></td></tr><tr>
+<td><label>Email:</label></td>
+<td><input type="email" name="email" value="<?=$email?>"><span class="error"><?php echo $emailErr;?></span></td></tr><tr>
+<td><label>Mobile:</label></td>
+<td><input type="mobile" name="mobile" value="<?=$mobile?>"><span class="error"><?php echo $mobileErr;?></span></td></tr><tr>
+<td><label>Gender:</label>
+<label>Male</label></td>
+<td><input type="radio" name="gender" value="male" <?php if(isset($gender) && $gender=="male")
+	         echo "checked" ; ?>>
+<label>Female</label>
+<input type="radio" name="gender" value="female" <?php if(isset($gender) && $gender=="female")
+	         echo "checked" ; ?>><span class="error"><?php echo $genderErr;?></span>
+</td></tr><tr>
+ <td><label>Subject:</label></td>
+             <td><label>Hindi</label>
+             <input type="checkbox" name="subject[]" value="Hindi"<?php if(isset($_POST["subject"]) && in_array("Hindi",$subject))echo "checked"; ?>>
+             <label>English</label>
+             <input type="checkbox" name="subject[]" value="English"<?php if(isset($_POST["subject"])&& in_array("English",$subject))echo"checked"; ?>>
+             <label>Math</label>
+             <input type="checkbox"  name="subject[]" value="Math"<?php if (isset($_POST["subject"])&& in_array("Math",$subject))echo "checked"; ?>><span class="error"><?php echo "$subjectErr"; ?></span></td></tr><tr>
+			   <td><label>Password:</label></td>
+                <td><input type="password" name="password"><span class="error"><?php echo $passwordErr;?></span></td></tr>
+               <td><label>Choose a City:</label></td>
+             <td><select name="city">
+             <option name="" value="">--select--</option>
+             <option name="city" value="Delhi"     <?php if(isset($city) && $city=="Delhi")     echo "selected"; ?>>Delhi</option>
+             <option name="city" value="Saharanpur" <?php if(isset($city) && $city=="Saharanpur") echo "selected"; ?>>Saharanpur</option> 
+             <option name="city" value="Meerut"     <?php if(isset($city) && $city=="Meerut")    echo "selected"; ?>>Meerut</option>
+             <option name="city" value="Dehradun"   <?php if(isset($city) && $city=="Dehradun")echo "selected"; ?>>Dehradun</select><span class="error"><?php echo "$cityErr"; ?></option></span></td></tr><tr>
+			 <td><label>Choose File:</label></td>
+			 <td><input type="file" accept="image/*" name="file"   value="<?php echo $file_name;
+      
+             ?>"></td></tr><tr>
+			   <td><label>file Value Hold:</label></td>
+             <td><input type="text"   name="file" value="<?php echo $file_name; ?>"><span class="error"> <?php echo " $imageErr "; ?></span>
+  
+<input type="submit" name="submit"></td>
+</form>
+</table>
+</div>
+</div>
+</body>
+</html>
+
+<!--<?Php Select Data-->
+
+<?php
+$conn = mysqli_connect('localhost', 'root','','vinit');
+
+$limit = 5;
+$page = isset($_GET['page']) ? $_GET['page'] : 1;
+$start = ($page - 1) * $limit;
+
+$search_query = isset($_GET['search']) ? $_GET['search'] : '';
+
+$query = "SELECT * FROM crud_insert";
+$count_query = "SELECT COUNT(*) AS total FROM crud_insert";
+
+if (!empty($search_query)) {
+    $query .= " WHERE id LIKE '%$search_query%' OR fname LIKE '%$search_query%' OR lname LIKE '%$search_query%'";
+    $count_query .= " WHERE id LIKE '%$search_query%' OR fname LIKE '%$search_query%' OR lname LIKE '%$search_query%'";
+}
+
+$query .= " LIMIT $start, $limit";
+
+$result = mysqli_query($conn, $query);
+$total_records = mysqli_fetch_assoc(mysqli_query($conn, $count_query))['total'];
+$total_pages = ceil($total_records / $limit);
+
+$current_page_has_data = mysqli_num_rows($result) > 0;
+
+// Calculate previous and next pages
+$prev_page = ($page > 1) ? $page - 1 : 1;
+$next_page = ($page < $total_pages) ? $page + 1 : $total_pages;
+?>
+
+<!-- Your HTML code remains unchanged -->
+
+
+
+<html>
+<head>
+    <title>Php Select Page Pagination </title>
+    <style>
+        table {
+            background-color: silver;
+            width: 100%;
+            margin: auto;
+        }
+
+        td {
+            font-size: 15px;
+            padding: 1px;
+            text-align: center;
+        }
+
+        th {
+            border: 1px solid #f2f2f2;
+            background-color: lightblue;
+            padding: 17px;
+            text-align: center;	
+            font-size: 18px;
+        }
+
+        input,
+        button {
+            height: 34px;
+        }
+
+        .pagination {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .pagination a {
+            padding: 5px 10px;
+            margin: 0 5px;
+            border: 1px solid #ccc;
+            text-decoration: none;
+        }
+
+        .pagination a.active {
+            background-color: #007bff;
+            color: #fff;
+            border: 1px solid #007bff;
+        }
+
+        .pagination a:hover:not(.active) {
+            background-color: #ddd;
+        }
+
+        .v {
+            margin-left: 410px;
+            margin-top: -35px;
+        }
+
+        .v strong {
+            font-size: 22px;
+        }
+    </style>
+</head>
+<body>
+<form action="" method="GET">
+    <label><strong>Search:</strong></label>
+    <input type="search" name="search" placeholder="search" value="<?php echo $search_query; ?>">
+    <input type="submit" value="Search">
+</form>
+<div class="v">
+    <strong>Click to Crud_insert page:</strong> <a href="crud_php_insert.php"><button>Crud_insert</button></a>
+</div>
+<br>
+<table border="1">
+    <tr>
+        <th>id</th>
+        <th>fname</th>
+        <th>lname</th>
+        <th>address</th>
+        <th>email</th>
+        <th>mobile</th>
+        <th>gender</th>
+        <th>subject</th>
+        <th>city</th>
+        <th>file</th>
+        <th>update</th>
+        <th>delete</th>
+    </tr>
+    <?php
+    if (mysqli_num_rows($result) === 0) {
+        echo "<tr><td colspan='12'>No data found.</td></tr>";
+    } else {
+        while ($d = mysqli_fetch_array($result)) :
+            ?>
+            <tr>
+                <td><?php echo $d['id']; ?></td>
+                <td><?php echo $d['fname']; ?></td>
+                <td><?php echo $d['lname']; ?></td>
+                <td><?php echo $d['address']; ?></td>
+                <td><?php echo $d['email']; ?></td>
+                <td><?php echo $d['mobile']; ?></td>
+                <td><?php echo $d['gender']; ?></td>
+                <td><?php echo $d['subject']; ?></td>
+                <td><?php echo $d['city']; ?></td>
+                <td><img src="./folder_2/<?php echo $d['file']; ?>" style='height:50px;'></td>
+                <td><a href="crud_update.php?id=<?php echo $d['id']; ?>&&page=<?php echo $page; ?>"><button><strong>update</strong></button></a></td>
+                <td><a href="crud_delete.php?id=<?php echo $d['id']; ?>&&page=<?php echo $page; ?>"><button><strong>delete</strong></button></a></td>
+                <?php endwhile; ?>
+            </tr>
+        <?php
+        }
+        ?>
+
+</table>
+
+<div class="pagination">
+    <?php
+    if ($total_pages > 0) {
+        echo "<a href='?page=" . $prev_page . "&search=" . urlencode($search_query) . "'" . ($page == 1 || !$current_page_has_data ? " style='display:none;'" : "") . ">Previous</a>";
+        for ($i = 1; $i <= $total_pages; $i++) {
+            if (mysqli_num_rows(mysqli_query($conn, "SELECT * FROM crud_insert LIMIT " . (($i - 1) * $limit) . ", $limit")) > 0) {
+                echo "<a href='?page=" . $i . "&search=" . urlencode($search_query) . "' class='" . ($page == $i ? "active" : "") . "'>" . $i . "</a> ";
+            }
+        }
+        echo "<a href='?page=" . $next_page . "&search=" . urlencode($search_query) . "'" . ($page == $total_pages || !$current_page_has_data ? " style='display:none;'" : "") . ">Next</a>";
+    }
+    ?>
+</div>
+</body>
+</html>
+<!--<?Php Update Form-->
+
+<?php
+	$conn= mysqli_connect("localhost","root","","vinit");						
+$fname = $lname = $address = $mobile = $registration= $college= $gender= $email= $subject = $city= $file= $file_name="";
+$fnameErr = $lnameErr = $addressErr = $mobileErr =  $genderErr= $emailErr= $subjectErr=$cityErr=$imageErr= $c= $u= $err=$id="";
+if(isset($_GET['id'])){
+  if(isset($_POST['submit'])) {
+  if (empty($_POST["fname"])){
+	 $fnameErr = "*Name is required";
+	 }
+	 elseif (!preg_match("/^[a-zA-Z]*$/", $_POST["fname"])){
+		 $fnameErr = "Only Letters and white space allowed";}
+		 else{
+			 $fname = $_POST["fname"];
+
+			
+		 }
+	
+ 
+if (empty($_POST["lname"])){
+$lnameErr = "*Last name is required";}
+ elseif(!preg_match("/^[a-zA-Z ]*$/",$_POST["lname"])){
+ $lnameErr = "Only Letters and white space allowed";
+ 
+ }else{
+$lname = $_POST["lname"];
+
+}
+ 
+
+	if (empty($_POST["address"])){
+$addressErr = "*address is required";}
+ elseif(!preg_match("/^[a-zA-Z ]*$/", $_POST["address"])){
+ $addressErr = "Only Letters and white space allowed";}
+ else{
+$address = $_POST["address"];
+
+ }
+ 	if (empty($_POST["email"])) {
+	$emailErr = "*Please Enter a valid Email ";
+	}else{
+	$email= $_POST['email'];
+	if(!preg_match("/([\w\-]+\@[\w\-]+\.[\w\-]+)/",$email)) {
+	$emailErr = " Invalid email format";
+	
+	}
+	}
+ 
+	 if (empty($_POST["mobile"])){
+	 $mobileErr = "*Mobile No is required";}
+	 elseif(!preg_match ("/^[0-9]{10}+$/", $_POST["mobile"])){
+	 $mobileErr = "*Only 10 digit number";}
+	 else{
+	 $mobile = $_POST["mobile"];
+	
+
+	 }
+ 
+
+	
+ 
+
+     
+  if(empty($_POST["gender"])){
+	$genderErr="* Select gender";
+	}else{
+	$gender= $_POST["gender"];
+	if ($gender==$genderErr){
+	}else if($gender==$genderErr){
+	}
+	}
+
+
+
+      // if(!empty($_POST['subject'])){
+      // $subject=($_POST['subject']);
+	  // $c=implode(" ",$subject);
+	  // echo implode(" ",$subject);
+	  // echo"<br>";
+	  // }else{
+if(!empty($_POST["subject"])){
+$subject=($_POST["subject"]);
+	 $c=implode(",",$subject);
+	
+}else{
+	$subjectErr="* please enter subject";
+}
+
+ 
+ if (empty($_POST["city"])){
+ $cityErr="*Please Select city";
+	
+	 }else{
+	 $city = $_POST["city"];	
+	 }
+  
+ 
+// if(isset($_FILES['file']['size'])){
+	
+
+                    // $file_name=$_FILES['file']['name'];
+				   // $file_type=$_FILES['file']['type'];
+				   // $file_tmp=$_FILES['file']['tmp_name'];
+				   // $file_size=$_FILES['file']['size'];
+                   // $folder="folder/".$file_name;
+				  
+                   // move_uploaded_file($file_tmp,$folder);
+               
+                   // $err = pathinfo($_FILES["file"]["name"], PATHINFO_EXTENSION);
+                    // if($file_size < 2097152){      
+
+	
+
+// }else{
+	    // $message ='file size is large';
+		// echo $message."<br>";
+// }
+    // if($err=='jpg' || $err=='jpeg' || $err=='png' || $err=='gif')
+// {
+                   // echo "uloaded"."<br>";
+				 
+                   // echo "image name : " .$f_name=$_FILES['file']['name']."<br>";
+                  // echo "image type : " .$f_name=$_FILES['file']['type']."<br>";
+                  // echo " tmp name  : " .$f_name=$_FILES['file']['tmp_name']."<br>";
+		 if(empty($_FILES['file'])){
+	 $fileErr = " * File Required";
+ }else{
+if(isset($_FILES['file'])){
+	$file_name=($_POST['file']);
+	        $file_name = $_FILES['file']['name'];
+            $file_type = $_FILES['file']['type'];
+            $file_tmp = $_FILES['file']['tmp_name'];
+            $file_size = $_FILES['file']['size'];
+            $upload = pathinfo($_FILES["file"]["name"], PATHINFO_EXTENSION);
+            $allowed_extensions = array('jpg', 'png', 'gif');
+
+            if ($file_size > 2097152) {
+                $imageErr = "*File size is too large. Maximum 2MB allowed.";
+            } elseif (!in_array($upload, $allowed_extensions)) {
+                $imageErr = "*Only jpg, png, gif files are allowed";
+            } else {
+				
+                $folder_2 = "folder_2/" . $file_name;
+                if (move_uploaded_file($file_tmp, $folder_2)) {
+                    // File upload successful
+                } else {
+                    $imageErr = "*Failed to upload file";
+                }
+            }
+        }
+
+}
+}
+
+        if(isset($_GET['page'])) {    
+       $page=$_GET['page'];    
+		}
+          
+	$id=$_GET['id'];
+	if(!empty($fname)&& !empty($lname)&& !empty($address)&& !empty($email)&& !empty($mobile)&& !empty($gender)&& !empty($c) && !empty($city) && !empty($file_name)) {
+	$sql ="UPDATE crud_insert SET fname='$fname',lname='$lname',address='$address',email='$email'
+	,mobile='$mobile',gender='$gender'
+	,subject='$c',city='$city',file='$file_name' WHERE id='$id'";
+
+          $runs=mysqli_query($conn,$sql);
+          if($runs){
+      		//header("location:crud_php_select.php");   	
+  
+            	 header("location:crud_php_select.php?page=$page");   	 
+		
+		  }else{
+	      echo "data not update";
+                        
+         }  
+}
+	  
+}
+   	//$id=$_GET['id'];
+
+	$select="SELECT * FROM crud_insert WHERE id='$id'";
+	$subjects = array();
+    $run=mysqli_query($conn,$select);
+	if(mysqli_num_rows($run)>0){
+     $d=mysqli_fetch_assoc($run);
+		 $fname=$d['fname'];
+		 $lname=$d['lname'];
+		 $address=$d['address'];
+		 $email=$d['email'];
+		 $mobile=$d['mobile'];
+		 $gender=$d['gender'];
+		 $city=$d['city'];
+		 $file_name=$d['file'];
+	     $k=$d['subject'];
+		 $subjects=explode(',',$k);
+	}
+	
+	  
+?>
+
+<html>
+<head>
+<style>
+
+*{
+box-sizing: border-box; 
+}
+.main {
+
+	margin-left:380px;
+	margin-top:12px;
+   display: grid;
+   justify-content:center;
+   border-radius:12px;
+   border:2px outset;
+   place-items: center;
+   background-image:url("blue-office-stationery-set-with-laptop_23-2147843325.avif"); 
+   background-size:contain;
+   font-family: Arial, Helvetica, sans-serif;
+   
+   width: 480px;
+   height: 355px;
+
+}
+
+
+
+.error{
+	color:red;
+	font-size:10px;
+}
+.main h2{
+	margin-top:-2px;
+
+
+}
+</style>
+</head>
+<body>
+
+
+<div class="main">
+<h1>-:Crud_Update_Form:-</h1> 
+<table>
+<form action="" method="POST" enctype="multipart/form-data">
+<tr> 
+                <td> 
+                    <label> 
+                       First Name
+                    </label> 
+                </td> 
+                <td><input type="text"   name="fname" value="<?php echo $fname; ?>"><span class="error"> <?php echo "$fnameErr"; ?></span>
+                </td> 
+            </tr> 
+            <tr> 
+                <td><label>Last Name</label> 
+                </td> 
+                <td><input type="text" name="lname" value="<?php echo $lname; ?>"><span class="error"><?php echo "$lnameErr"; ?></span> 
+                </td> 
+            </tr> 
+            <tr> 
+                <td><label>Address</label> 
+                </td> 
+                <td><input type="text" name="address" value="<?php echo $address; ?>"><span class="error"><?php echo "$addressErr"; ?></span>
+                </td> 
+            </tr> 
+            <tr>
+<td><label>Email:</label></td>
+<td><input type="email" name="email" value="<?php echo $email; ?>"><span class="error"><?php echo "$emailErr"; ?></span></td></tr>			
+              
+            </tr> 
+			<tr>
+  <td><label>Mobile No</label> 
+                </td> 
+                <td><input type="text" name="mobile" value="<?php echo $mobile; ?>"><span class="error"><?php echo "$mobileErr"; ?></span>
+                </td> </tr><tr>
+			 <td><label>Gender:</label>
+<label>Male:</label></td>
+<td><input type="radio"  name="gender" value="male" <?php if(isset($gender) && $gender=="male")
+	echo "checked" ; ?>>
+
+<label>Female:</label>
+<input type="radio" name="gender" value="female" <?php if(isset($gender) && $gender=="female")echo "checked"; ?>><span class="error"><?php echo "$genderErr";
+?></span></td>
+</tr>
+<tr> 
+<td><label>Subject:</label></td>
+<td><label>Hindi</label>
+<input type="checkbox" name="subject[]"  id="subject" value="Hindi"<?php if(in_array("Hindi",$subjects))echo "checked"; ?>>
+<label>English</label>
+<input type="checkbox" name="subject[]"  id="subject" value="English"<?php if(in_array("English",$subjects))echo "checked"; ?>>
+<label>Math</label>
+<input type="checkbox"  name="subject[]" id="subject" value="Math"<?php if(in_array("Math",$subjects))echo "checked"; ?>><span class="error"><?php echo "$subjectErr"; ?></span></td></tr><tr>
+<td><label>Choose a City:</label></td>
+   <td><select name="city">
+   <option name="" value="">--select--</option>
+   <option name="city" value="Delhi"      <?php if(isset($city) && $city=="Delhi")     echo "selected"; ?>>Delhi</option>
+   <option name="city" value="Saharanpur" <?php if(isset($city) && $city=="Saharanpur") echo "selected"; ?>>Saharanpur</option> 
+   <option name="city" value="Meerut"     <?php if(isset($city) && $city=="Meerut")    echo "selected"; ?>>Meerut</option>
+   <option name="city" value="Dehradun"   <?php if(isset($city) && $city=="Dehradun")echo "selected"; ?>>Dehradun</select><span class="error"><?php echo "$cityErr"; ?></option></span></td></tr><tr>
+   <td><label>Select a file:</label></td>	
+   <td><input type="file" accept="image/*" name="file"   value="<?php echo $file_name;
+      
+        ?>"></td></tr><tr>
+		<td><label>file Value Hold:</label></td>
+<td><input type="text"   name="file" value="<?php echo $file_name; ?>"><span class="error"> <?php echo $imageErr ?></span>
+  
+   <input type="submit" name="submit"> 
+       </td>
+
+</form>
+</div>  
+</body>
+</html>
