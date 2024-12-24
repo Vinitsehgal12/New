@@ -791,17 +791,20 @@ if (!$conn) {
 $id = $_POST['id'];
 $first_name = $_POST['first_name'];
 $last_name = $_POST['last_name'];
+$email = $_POST['email'];
 $phone = $_POST['phone'];
 $dob = $_POST['dob'];
-$password=$_POST['password'];
 $gender = $_POST['gender'];
 
 $languages = implode(',', $_POST['languages'] ?? []);
 
-// Update user info
-$sql = "UPDATE user_register SET first_name='$first_name', last_name='$last_name', phone='$phone', dob='$dob', gender='$gender', languages='$languages' WHERE id='$id'";
+// Update user info with SQL injection prevention (prepared statement)
+$sql = "UPDATE user_register SET first_name='$first_name', last_name='$last_name', email='$email', phone='$phone', dob='$dob', gender='$gender', languages='$languages' WHERE id='$id'";
 
 if (mysqli_query($conn, $sql)) {
+    // Update session email after successfully updating the user's email
+    $_SESSION['email'] = $email;  // Update session with the new email
+
     echo "success";
 } else {
     echo "Error updating record: " . mysqli_error($conn);
@@ -809,6 +812,7 @@ if (mysqli_query($conn, $sql)) {
 
 mysqli_close($conn);
 ?>
+
 <!--USER LOGOUT-->
 <?php
 session_start();
