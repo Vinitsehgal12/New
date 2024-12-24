@@ -242,93 +242,78 @@
 </body>
 </html>
 <!---LOGIN USER-->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <style>
-        .error { color: red; font-size: 0.9em; }
-    </style>
-</head>
-<body>
-    <form id="loginForm">
-        <h2>Login</h2>
-        <input type="email" id="login_email" name="email" placeholder="Enter email" required><br>
-        <span id="login_email_error" class="error"></span><br>
-
-        <input type="password" id="login_password" name="password" placeholder="Enter password" required><br>
-        <span id="login_password_error" class="error"></span><br>
-
-        <button type="submit">Login</button>
-        <div id="general_login_error_message" class="error"></div>
-    </form>
-
-    <script>
-        $(document).ready(function () {
-            // Validate Email
-            function validateEmail(email) {
-                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                return emailPattern.test(email);
-            }
-
-            // Real-time validation on keyup and blur events
-            $('#login_email').on('keyup blur', function () {
-                const email = $(this).val().trim();
-                if (email === '') {
-                    $('#login_email_error').text('Enter an email address.');
-                } else if (!validateEmail(email)) {
-                    $('#login_email_error').text('Invalid Email format.');
-                } else {
-                    $('#login_email_error').text('');
-                }
-            });
-
-            $('#login_password').on('keyup blur', function () {
-                const password = $(this).val().trim();
-                if (password === '') {
-                    $('#login_password_error').text('Enter your password.');
-                } else {
-                    $('#login_password_error').text('');
-                }
-            });
-
-            // Final form validation on submit
-            $('#loginForm').on('submit', function (e) {
-                e.preventDefault();
-
-                const email = $('#login_email').val().trim();
-                const password = $('#login_password').val().trim();
-
-                if (email === '' || !validateEmail(email) || password === '') {
-                    $('#general_login_error_message').text('Please fill in all fields correctly.');
-                    return;
-                }
-
-                $('#general_login_error_message').text('');
-				 const formdata = $("#loginForm").serialize();
-				 console.log(formdata); 
-            $.ajax({
-    type: "POST",
-    url: "process.php",
-    data: formdata,
-    success: function (response) {
-		 console.log(response); 
-        if (response === 'success') {
-            window.location.href = 'user-dashboard.php';
-        } else {
-            $('#general_login_error_message').text('Invalid email or password.');
+ body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 120vh;
+            margin: 0;
         }
-    },
-});
+        
+        #loginForm {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
 
-            });
-        });
-    </script>
-</body>
-</html>
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        input[type="text"], input[type="email"], input[type="date"], input[type="password"], button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .error {
+            color: red;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .gender, .languages {
+            margin-right: 10px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+            display: inline-block;
+        }
+
+        .error {
+            font-size: 0.9em;
+            color: red;
+        }
+
+        #general_error_message {
+            text-align: center;
+            font-weight: bold;
+            color: red;
+            margin-top: 10px;
+        }
 <!--PROCESS-->
 <?php
 session_start();
