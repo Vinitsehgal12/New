@@ -242,7 +242,15 @@
 </body>
 </html>
 <!---LOGIN USER-->
- body {
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             display: flex;
@@ -314,6 +322,85 @@
             color: red;
             margin-top: 10px;
         }
+    </style>
+</head>
+<body>
+    <form id="loginForm">
+        <h2>Login</h2>
+        <input type="email" id="login_email" name="email" placeholder="Enter email" required><br>
+        <span id="login_email_error" class="error"></span><br>
+
+        <input type="password" id="login_password" name="password" placeholder="Enter password" required><br>
+        <span id="login_password_error" class="error"></span><br>
+
+        <button type="submit">Login</button>
+        <div id="general_login_error_message" class="error"></div>
+    </form>
+
+    <script>
+        $(document).ready(function () {
+            // Validate Email
+            function validateEmail(email) {
+                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return emailPattern.test(email);
+            }
+
+            // Real-time validation on keyup and blur events
+            $('#login_email').on('keyup blur', function () {
+                const email = $(this).val().trim();
+                if (email === '') {
+                    $('#login_email_error').text('Enter an email address.');
+                } else if (!validateEmail(email)) {
+                    $('#login_email_error').text('Invalid Email format.');
+                } else {
+                    $('#login_email_error').text('');
+                }
+            });
+
+            $('#login_password').on('keyup blur', function () {
+                const password = $(this).val().trim();
+                if (password === '') {
+                    $('#login_password_error').text('Enter your password.');
+                } else {
+                    $('#login_password_error').text('');
+                }
+            });
+
+            // Final form validation on submit
+            $('#loginForm').on('submit', function (e) {
+                e.preventDefault();
+
+                const email = $('#login_email').val().trim();
+                const password = $('#login_password').val().trim();
+
+                if (email === '' || !validateEmail(email) || password === '') {
+                    $('#general_login_error_message').text('Please fill in all fields correctly.');
+                    return;
+                }
+
+                $('#general_login_error_message').text('');
+				 const formdata = $("#loginForm").serialize();
+				 console.log(formdata); 
+            $.ajax({
+    type: "POST",
+    url: "process.php",
+    data: formdata,
+    success: function (response) {
+		 console.log(response); 
+        if (response === 'success') {
+            window.location.href = 'user-dashboard.php';
+        } else {
+            $('#general_login_error_message').text('Invalid email or password.');
+        }
+    },
+});
+
+            });
+        });
+    </script>
+</body>
+</html>
+
 <!--PROCESS-->
 <?php
 session_start();
