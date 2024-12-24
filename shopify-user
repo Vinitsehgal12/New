@@ -6,13 +6,13 @@
     <title>Register</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
-       body {
+        body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            height: 120vh;
             margin: 0;
         }
         
@@ -81,164 +81,168 @@
     </style>
 </head>
 <body>
-    <div id="Register-data"></div>
-    <form id="registerForm">
-        <h2>Register</h2>
-        <input type="text" id="first_name" name="first_name" placeholder="Enter First Name"><br>
-        <span id="first_name_error" class="error"></span><br>
 
-        <input type="text" id="last_name" name="last_name" placeholder="Enter Last Name"><br>
-        <span id="last_name_error" class="error"></span><br>
+<div id="Register-data"></div>
 
-        <input type="email" id="email" name="email" placeholder="Enter Email"><br>
-        <span id="email_error" class="error"></span><br>
+<form id="registerForm">
+    <h2>Register</h2>
+    <input type="text" id="first_name" name="first_name" placeholder="Enter First Name"><br>
+    <span id="first_name_error" class="error"></span><br>
 
-        <input type="text" id="phone" name="phone" placeholder="Enter Phone Number"><br>
-        <span id="phone_error" class="error"></span><br>
+    <input type="text" id="last_name" name="last_name" placeholder="Enter Last Name"><br>
+    <span id="last_name_error" class="error"></span><br>
 
-        <input type="date" id="dob" name="dob"><br>
-        <span id="dob_error" class="error"></span><br>
+    <input type="email" id="email" name="email" placeholder="Enter Email"><br>
+    <span id="email_error" class="error"></span><br>
 
-        <input type="password" id="password" name="password" placeholder="Enter Password"><br>
-        <span id="password_error" class="error"></span><br>
+    <input type="text" id="phone" name="phone" placeholder="Enter Phone Number"><br>
+    <span id="phone_error" class="error"></span><br>
 
-         <label>Gender:</label>
-            <input type="radio" id="male" name="gender" value="male" class="gender">
-            <label for="male">Male</label>
-            <input type="radio" id="female" name="gender" value="female" class="gender">
-            <label for="female">Female</label>
-        <span id="gender_error" class="error"></span><br>
+    <input type="date" id="dob" name="dob"><br>
+    <span id="dob_error" class="error"></span><br>
 
-        <label>Select Languages:</label><br>
-        <input type="checkbox" class="languages" name="languages[]" value="Hindi"> Hindi
-        <input type="checkbox" class="languages" name="languages[]" value="English"> English
-        <input type="checkbox" class="languages" name="languages[]" value="Punjabi"> Punjabi<br>
-        <span id="languages_error" class="error"></span><br>
+    <input type="password" id="password" name="password" placeholder="Enter Password"><br>
+    <span id="password_error" class="error"></span><br>
 
-        <button type="submit">Register</button>
-        <div id="general_error_message" class="error"></div>
-    </form>
+    <label>Gender:</label>
+    <input type="radio" id="male" name="gender" value="male" class="gender">
+    <label for="male">Male</label>
+    <input type="radio" id="female" name="gender" value="female" class="gender">
+    <label for="female">Female</label>
+    <span id="gender_error" class="error"></span><br>
 
-    <script>
-        $(document).ready(function () {
-            function validateName(name) {
-                const namePattern = /^[A-Za-z_]{3,}$/;
-                return namePattern.test(name);
-            }
+    <label>Select Languages:</label><br>
+    <input type="checkbox" class="languages" name="languages[]" value="Hindi"> Hindi
+    <input type="checkbox" class="languages" name="languages[]" value="English"> English
+    <input type="checkbox" class="languages" name="languages[]" value="Punjabi"> Punjabi<br>
+    <span id="languages_error" class="error"></span><br>
 
-            function validateEmail(email) {
-                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                return emailPattern.test(email);
-            }
+    <button type="submit">Register</button>
+    <div id="general_error_message" class="error"></div>
+</form>
 
-            function validatePhone(phone) {
-                const phonePattern = /^\d{10}$/;
-                return phonePattern.test(phone);
-            }
+<script>
+    $(document).ready(function () {
+        function validateName(name) {
+            const namePattern = /^[A-Za-z_]{3,}$/;
+            return namePattern.test(name);
+        }
 
-            function validatePassword(password) {
-                const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
-                return passwordPattern.test(password);
-            }
+        function validateEmail(email) {
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailPattern.test(email);
+        }
 
-            $('#first_name').on('keyup blur', function () {
-                const firstName = $(this).val().trim();
-                $('#first_name_error').text(firstName === '' ? 'Enter a name for First Name.' : 
-                    !validateName(firstName) ? 'Expect only letters or underscore, at least 3 characters.' : '');
-            });
+        function validatePhone(phone) {
+            const phonePattern = /^\d{10}$/;
+            return phonePattern.test(phone);
+        }
 
-            $('#last_name').on('keyup blur', function () {
-                const lastName = $(this).val().trim();
-                $('#last_name_error').text(lastName === '' ? 'Enter a name for Last Name.' : 
-                    !validateName(lastName) ? 'Expect only letters or underscore, at least 3 characters.' : '');
-            });
+        function validatePassword(password) {
+            const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
+            return passwordPattern.test(password);
+        }
 
-            $('#email').on('keyup blur', function () {
-                const email = $(this).val().trim();
-                $('#email_error').text(email === '' ? 'Enter an email address.' : 
-                    !validateEmail(email) ? 'Invalid Email format.' : '');
-            });
-
-            $('#phone').on('keyup blur', function () {
-                const phone = $(this).val().trim();
-                $('#phone_error').text(phone === '' ? 'Enter a phone number.' : 
-                    !validatePhone(phone) ? 'Phone Number must be exactly 10 digits.' : '');
-            });
-
-            $('#dob').on('blur', function () {
-                const dob = $(this).val().trim();
-                const birthDate = new Date(dob);
-                const today = new Date();
-                let age = today.getFullYear() - birthDate.getFullYear();
-                const monthDiff = today.getMonth() - birthDate.getMonth();
-                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-                    age--;
-                }
-                $('#dob_error').text(dob === '' ? 'Enter your Date of Birth.' : 
-                    age < 18 ? 'You must be 18 years or older.' : '');
-            });
-
-            $('#password').on('keyup blur', function () {
-                const password = $(this).val().trim();
-                $('#password_error').text(password === '' ? 'Enter a password.' : 
-                    !validatePassword(password) ? 'Password must be at least 6 characters, including at least one letter and one number.' : '');
-            });
-
-            $('#gender').on('change', function () {
-        const gender = $('input[name="gender"]:checked').val();
-        $('#gender_error').text(gender === undefined ? 'Please select your gender.' : '');
-    });
-            $('input.languages').on('change', function () {
-                const languages = $('input.languages:checkbox:checked').length;
-                $('#languages_error').text(languages < 2 ? 'Please select at least two languages.' : '');
-            });
-
-            $('#registerForm').on('submit', function (e) {
-                e.preventDefault();
-                
-                let isValid = true;
-                const firstName = $('#first_name').val().trim();
-                const lastName = $('#last_name').val().trim();
-                const email = $('#email').val().trim();
-                const phone = $('#phone').val().trim();
-                const dob = $('#dob').val().trim();
-                 const gender = $('input[name="gender"]:checked').val();
-                const password = $('#password').val().trim();
-                const languages = $('input.languages:checkbox:checked').length;
-
-                if (!firstName || !validateName(firstName)) isValid = false;
-                if (!lastName || !validateName(lastName)) isValid = false;
-                if (!email || !validateEmail(email)) isValid = false;
-                if (!phone || !validatePhone(phone)) isValid = false;
-                if (!dob || (new Date().getFullYear() - new Date(dob).getFullYear()) < 18) isValid = false;
-                if (!gender) isValid = false;
-                if (!password || !validatePassword(password)) isValid = false;
-                if (languages < 2) isValid = false;
-
-                if (isValid) {
-                    $('#general_error_message').text('');
-                    const formdata = $("#registerForm").serialize();
-                    $.ajax({
-                        url: "save.php",
-                        method: "POST",
-                        data: formdata,
-                        success: function (response) {
-                            if (response.includes("success")) {
-                                alert("Account Created successful!");
-                                setTimeout(function() {
-                                    window.location.href = 'login-user.php';
-                                }, 2000);
-                            } else {
-                                $('#general_error_message').text(response);
-                            }
-                        },
-                    });
-                } else {
-                    $('#general_error_message').text('Please fill in all fields correctly.');
-                }
-            });
+        $('#first_name').on('keyup blur', function () {
+            const firstName = $(this).val().trim();
+            $('#first_name_error').text(firstName === '' ? 'Enter a name for First Name.' :
+                !validateName(firstName) ? 'Expect only letters or underscore, at least 3 characters.' : '');
         });
-    </script>
+
+        $('#last_name').on('keyup blur', function () {
+            const lastName = $(this).val().trim();
+            $('#last_name_error').text(lastName === '' ? 'Enter a name for Last Name.' :
+                !validateName(lastName) ? 'Expect only letters or underscore, at least 3 characters.' : '');
+        });
+
+        $('#email').on('keyup blur', function () {
+            const email = $(this).val().trim();
+            $('#email_error').text(email === '' ? 'Enter an email address.' :
+                !validateEmail(email) ? 'Invalid Email format.' : '');
+        });
+
+        $('#phone').on('keyup blur', function () {
+            const phone = $(this).val().trim();
+            $('#phone_error').text(phone === '' ? 'Enter a phone number.' :
+                !validatePhone(phone) ? 'Phone Number must be exactly 10 digits.' : '');
+        });
+
+        $('#dob').on('blur', function () {
+            const dob = $(this).val().trim();
+            const birthDate = new Date(dob);
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            $('#dob_error').text(dob === '' ? 'Enter your Date of Birth.' :
+                age < 18 ? 'You must be 18 years or older.' : '');
+        });
+
+        $('#password').on('keyup blur', function () {
+            const password = $(this).val().trim();
+            $('#password_error').text(password === '' ? 'Enter a password.' :
+                !validatePassword(password) ? 'Password must be at least 6 characters, including at least one letter and one number.' : '');
+        });
+
+        $('#gender').on('change', function () {
+            const gender = $('input[name="gender"]:checked').val();
+            $('#gender_error').text(gender === undefined ? 'Please select your gender.' : '');
+        });
+
+        $('input.languages').on('change', function () {
+            const languages = $('input.languages:checkbox:checked').length;
+            $('#languages_error').text(languages < 2 ? 'Please select at least two languages.' : '');
+        });
+
+        $('#registerForm').on('submit', function (e) {
+            e.preventDefault();
+
+            let isValid = true;
+            const firstName = $('#first_name').val().trim();
+            const lastName = $('#last_name').val().trim();
+            const email = $('#email').val().trim();
+            const phone = $('#phone').val().trim();
+            const dob = $('#dob').val().trim();
+
+            const gender = $('input[name="gender"]:checked').val();
+            const password = $('#password').val().trim();
+            const languages = $('input.languages:checkbox:checked').length;
+
+            if (!firstName || !validateName(firstName)) isValid = false;
+            if (!lastName || !validateName(lastName)) isValid = false;
+            if (!email || !validateEmail(email)) isValid = false;
+            if (!phone || !validatePhone(phone)) isValid = false;
+            if (!dob || (new Date().getFullYear() - new Date(dob).getFullYear()) < 18) isValid = false;
+            if (!gender) isValid = false;
+            if (!password || !validatePassword(password)) isValid = false;
+            if (languages < 2) isValid = false;
+
+            if (isValid) {
+                $('#general_error_message').text('');
+                const formdata = $("#registerForm").serialize();
+                $.ajax({
+                    url: "save.php",
+                    method: "POST",
+                    data: formdata,
+                    success: function (response) {
+                        if (response.includes("success")) {
+                            alert("Account Created successful!");
+                            setTimeout(function() {
+                                window.location.href = 'login-user.php';
+                            }, 2000);
+                        } else {
+                            $('#general_error_message').text(response);
+                        }
+                    },
+                });
+            } else {
+                $('#general_error_message').text('Please fill in all fields correctly.');
+            }
+        });
+    });
+</script>
 </body>
 </html>
 <!---LOGIN USER-->
@@ -425,7 +429,9 @@ if (mysqli_num_rows($result) == 1) {
     echo 'error'; // Indicating failure
 }
 ?>
+
 <!--SAVE-->
+
 <?php
 
 $first_name = $last_name = $email = $phone = $dob = $password=$gender = $languages = "";
@@ -451,7 +457,7 @@ if (isset($_POST['first_name'], $_POST['last_name'], $_POST['email'], $_POST['ph
         if (mysqli_num_rows($result) > 0) {
             echo "Email already registered. Please use a different email.";
         } else {
-            $insert = "INSERT INTO user_register (first_name, last_name, email,phone,dob,password,gender,languages) VALUES ('$first_name', '$last_name', '$email', '$phone', '$dob','$password'$gender','$languages')";
+            $insert = "INSERT INTO user_register (first_name, last_name, email,phone,dob,password,gender,languages) VALUES ('$first_name', '$last_name', '$email', '$phone', '$dob','$password','$gender','$languages')";
             if (mysqli_query($connection, $insert)) {
                 echo "User registered successfully.";
             } else {
@@ -463,7 +469,7 @@ if (isset($_POST['first_name'], $_POST['last_name'], $_POST['email'], $_POST['ph
     }
 }
 ?>
-<!--USER DASHOARD-->
+
 <?php
 session_start();
 
@@ -573,6 +579,7 @@ if (!$conn) {
         });
     </script>
 </body>
+
 <!--USER UPDATE FORM-->
 <?php
 session_start();
