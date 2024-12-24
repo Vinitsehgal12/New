@@ -818,7 +818,7 @@ exit();
 $servername = "localhost"; // Your server name (usually localhost)
 $username = "root"; // Your MySQL username
 $password = ""; // Your MySQL password
-$dbname = Example_database// Your database name
+$dbname = "Example_database";// Your database name
 
 // Create a connection
 $conn = new mysqli($servername, $username, $password, $dbname);
