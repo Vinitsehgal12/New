@@ -601,7 +601,7 @@ $user = mysqli_fetch_assoc($result);
         <input type="text" id="last_name" name="last_name" placeholder="Enter Last Name" value="<?php echo $user['last_name']; ?>"><br>
         <span id="last_name_error" class="error"></span><br>
 
-        <input type="email" id="email" name="email" placeholder="Enter Email" value="<?php echo $user['email']; ?>" readonly><br>
+        <input type="email" id="email" name="email" placeholder="Enter Email" value="<?php echo $user['email']; ?>"><br>
         <span id="email_error" class="error"></span><br>
 
         <input type="text" id="phone" name="phone" placeholder="Enter Phone Number" value="<?php echo $user['phone']; ?>"><br>
