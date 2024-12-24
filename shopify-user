@@ -469,7 +469,7 @@ if (isset($_POST['first_name'], $_POST['last_name'], $_POST['email'], $_POST['ph
     }
 }
 ?>
-
+<!--USER-DASHBOARD-->
 <?php
 session_start();
 
@@ -611,17 +611,17 @@ $user = mysqli_fetch_assoc($result);
     <title>Edit Profile</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
-         body {
+       body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            height: 120vh;
             margin: 0;
         }
         
-        #editForm {
+        #editForm{
             background-color: #fff;
             border-radius: 10px;
             padding: 20px;
@@ -853,6 +853,7 @@ $user = mysqli_fetch_assoc($result);
     </script>
 </body>
 </html>
+
 <!--USER-UPDATE->
 <?php
 session_start();
@@ -891,6 +892,7 @@ if (mysqli_query($conn, $sql)) {
 
 mysqli_close($conn);
 ?>
+
 
 <!--USER LOGOUT-->
 <?php
