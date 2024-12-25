@@ -1,0 +1,40 @@
+<!--Db Connection table-->
+<?php
+// Database connection details
+$servername = "localhost"; // Your server name (usually localhost)
+$username = "root"; // Your MySQL username
+$password = ""; // Your MySQL password
+$dbname = "Example_database";// Your database name
+
+// Create a connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Check the connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// SQL query to create the table
+$sql = "CREATE TABLE IF NOT EXISTS `user_register` (
+    `id` INT(100) NOT NULL AUTO_INCREMENT,
+    `first_name` VARCHAR(100) NOT NULL,
+    `last_name` VARCHAR(100) NOT NULL,
+    `email` VARCHAR(100) NOT NULL,
+    `phone` VARCHAR(100) NOT NULL,
+    `dob` VARCHAR(100) NOT NULL,
+    `password` VARCHAR(100) NOT NULL,
+    `gender` VARCHAR(100) NOT NULL,
+    `languages` VARCHAR(100) NOT NULL,
+    PRIMARY KEY (`id`)
+)";
+
+// Execute the query
+if ($conn->query($sql) === TRUE) {
+    echo "Table 'user_register' created successfully.";
+} else {
+    echo "Error creating table: " . $conn->error;
+}
+
+// Close the connection
+$conn->close();
+?>
