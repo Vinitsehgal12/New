@@ -1,0 +1,109 @@
+<?php
+session_start();
+
+// Check if user is logged in
+if (!isset($_SESSION['email'])) {
+    header("Location: login-user.php");
+    exit();
+}
+
+// Database connection
+$conn = mysqli_connect('localhost', 'root', '', 'Example_database');
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid black;
+        }
+        h1 {
+            text-align: center;
+        }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+<body>
+    <h1>Display Data</h1>
+
+    <!-- Add the logout link/button -->
+   
+
+    <table style="background-color: lightgrey;">
+        <tr>
+            <th>ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Dob</th>
+            <th>Gender</th>
+            <th>Languages</th>
+            <th colspan="2">Action</th>
+        </tr>
+
+        <?php
+        $user_email = $_SESSION['email'];
+        $sql = "SELECT * FROM user_register WHERE email = '$user_email'";
+        $select = mysqli_query($conn, $sql);
+        while ($d = mysqli_fetch_assoc($select)) {
+        ?>
+            <tr class="main<?php echo $d['id']; ?>">
+                <td><?php echo $d['id']; ?></td>
+                <td><?php echo $d['first_name']; ?></td>
+                <td><?php echo $d['last_name']; ?></td>
+                <td><?php echo $d['email']; ?></td>
+                <td><?php echo $d['phone']; ?></td>
+                <td><?php echo $d['dob']; ?></td>
+                <td><?php echo $d['gender']; ?></td>
+                <td><?php echo $d['languages']; ?></td>
+                <td><button class="edit" data-id="<?php echo $d['id']; ?>">Edit</button></td>
+				<td>
+                <a href="logout.php"><button>Logout</button></a>
+    </td>
+            </tr>
+        <?php
+        }
+        ?>
+    </table>
+
+    <div id="message" class="error"></div>
+
+    <script>
+        $(document).ready(function () {
+            // Edit functionality
+            $('.edit').click(function (ev) {
+                ev.preventDefault();
+                var id = $(this).data('id');
+
+                $.ajax({
+                    type: "POST",
+                    url: "user-update.php",
+                    data: { id: id },
+                    success: function (response) {
+                        // Replace current content with update form
+                        $('body').html(response);
+                    },
+                    error: function (xhr, status, error) {
+                        alert("Error loading update form. Please try again.");
+                    }
+                });
+            });
+        });
+    </script>
+</body>
