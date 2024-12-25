@@ -1,0 +1,24 @@
+<!--PROCESS-->
+<?php
+session_start();
+
+// Database connection
+$conn = mysqli_connect('localhost', 'root', '', 'example_database');
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+}
+
+$email = $_POST['email'];
+$password = $_POST['password'];
+
+// Basic SQL query (note: this is vulnerable to SQL injection)
+$sql = "SELECT * FROM user_register WHERE email = '$email' AND password = '$password'";
+$result = mysqli_query($conn, $sql);
+
+if (mysqli_num_rows($result) == 1) {
+    $_SESSION['email'] = $email; 
+    echo 'success'; // Indicating success
+} else {
+    echo 'error'; // Indicating failure
+}
+?>
