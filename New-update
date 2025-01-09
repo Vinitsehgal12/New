@@ -373,3 +373,471 @@ if(isset($_FILES['file'])){
         }
 
 }
+?>
+<!--UPDATE SECOND-->
+<?php
+session_start();
+
+if (!isset($_SESSION['email'])) {
+    header("Location: login-user.php");
+    exit();
+}
+
+$conn = mysqli_connect('localhost', 'root', '', 'example_database');
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+}
+
+$id = $_POST['id'];
+$first_name = $_POST['first_name'];
+$last_name = $_POST['last_name'];
+$email = $_POST['email'];
+$phone = $_POST['phone'];
+$dob = $_POST['dob'];
+$gender = $_POST['gender'];
+
+$languages = implode(',', $_POST['languages'] ?? []);
+
+// File upload handling
+$imageErr = "";  // Variable to store error messages for file upload
+$file_name = "";
+if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] == 0) {
+    $file_name = $_FILES['profile_picture']['name'];
+    $file_tmp = $_FILES['profile_picture']['tmp_name'];
+    $file_size = $_FILES['profile_picture']['size'];
+    $upload = pathinfo($_FILES["profile_picture"]["name"], PATHINFO_EXTENSION);
+    $allowed_extensions = array('jpg', 'png', 'gif');
+
+    if ($file_size > 2097152) {
+        $imageErr = "*File size is too large. Maximum 2MB allowed.";
+    } elseif (!in_array($upload, $allowed_extensions)) {
+        $imageErr = "*Only jpg, png, gif files are allowed.";
+    } else {
+        $folder_2 = "folder_2/" . $file_name;
+        if (move_uploaded_file($file_tmp, $folder_2)) {
+            // File upload successful
+        } else {
+            $imageErr = "*Failed to upload file";
+        }
+    }
+}
+
+// If no error in file upload, proceed with the update
+if (empty($imageErr)) {
+    // Prepare the SQL query to update user info
+    $sql = "UPDATE user_register SET first_name='$first_name', last_name='$last_name', email='$email', phone='$phone', dob='$dob', gender='$gender', languages='$languages'";
+
+    // If the profile picture is updated, add it to the query
+    if (!empty($file_name)) {
+        $sql .= ", file='$file_name'";
+    }
+
+    $sql .= " WHERE id='$id'";
+
+    if (mysqli_query($conn, $sql)) {
+        // Update session email after successfully updating the user's email
+        $_SESSION['email'] = $email;  // Update session with the new email
+
+        echo "success";
+    } else {
+        echo "Error updating record: " . mysqli_error($conn);
+    }
+} else {
+    echo $imageErr;  // Display the error message for file upload
+}
+
+mysqli_close($conn);
+?>
+<!--UPDATE FORM-->
+<?php
+session_start();
+
+// Check if user is logged in
+if (!isset($_SESSION['email'])) {
+    header("Location: login-user.php");
+    exit();
+}
+
+// Database connection
+$conn = mysqli_connect('localhost', 'root', '', 'Example_database');
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+}
+
+// Fetch user data
+$user_email = $_SESSION['email'];
+$sql = "SELECT * FROM user_register WHERE email = '$user_email'";
+$result = mysqli_query($conn, $sql);
+$user = mysqli_fetch_assoc($result);
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 120vh;
+            margin: 0;
+        }
+        
+        #editForm {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        input[type="text"], input[type="email"], input[type="date"], input[type="password"], input[type="file"], button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .error {
+            color: red;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+            display: inline-block;
+        }
+
+        #general_error_message {
+            text-align: center;
+            font-weight: bold;
+            color: red;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <form id="editForm" enctype="multipart/form-data">
+        <h2>Edit Profile</h2>
+        <input type="hidden" name="id" value="<?php echo $user['id']; ?>">
+
+        <input type="text" id="first_name" name="first_name" placeholder="Enter First Name" value="<?php echo $user['first_name']; ?>"><br>
+        <span id="first_name_error" class="error"></span><br>
+
+        <input type="text" id="last_name" name="last_name" placeholder="Enter Last Name" value="<?php echo $user['last_name']; ?>"><br>
+        <span id="last_name_error" class="error"></span><br>
+
+        <input type="email" id="email" name="email" placeholder="Enter Email" value="<?php echo $user['email']; ?>"><br>
+        <span id="email_error" class="error"></span><br>
+
+        <input type="text" id="phone" name="phone" placeholder="Enter Phone Number" value="<?php echo $user['phone']; ?>"><br>
+        <span id="phone_error" class="error"></span><br>
+
+        <input type="date" id="dob" name="dob" value="<?php echo $user['dob']; ?>"><br>
+        <span id="dob_error" class="error"></span><br>
+
+        <label>Gender:</label>
+        <input type="radio" id="male" name="gender" class="gender" value="male" <?php echo (isset($user['gender']) && $user['gender'] == 'male') ? 'checked' : ''; ?>>
+        <label for="male">Male</label>
+
+        <input type="radio" id="female" name="gender" class="gender" value="female" <?php echo (isset($user['gender']) && $user['gender'] == 'female') ? 'checked' : ''; ?>>
+        <label for="female">Female</label>
+        <span id="gender_error" class="error"></span><br>
+
+        <label>Select Languages:</label><br>
+        <input type="checkbox" class="languages" name="languages[]" value="Hindi" <?php echo (strpos($user['languages'], 'Hindi') !== false) ? 'checked' : ''; ?>> Hindi
+        <input type="checkbox" class="languages" name="languages[]" value="English" <?php echo (strpos($user['languages'], 'English') !== false) ? 'checked' : ''; ?>> English
+        <input type="checkbox" class="languages" name="languages[]" value="Punjabi" <?php echo (strpos($user['languages'], 'Punjabi') !== false) ? 'checked' : ''; ?>> Punjabi<br>
+        <span id="languages_error" class="error"></span><br>
+
+        <label>Upload Profile Picture:</label>
+        <input type="file" id="profile_picture" name="profile_picture"><br>
+        <span id="file_error" class="error"></span><br>
+
+        <button type="submit">Update</button>
+        <div id="general_error_message" class="error"></div>
+    </form>
+
+    <script>
+        $(document).ready(function () {
+            // Regular expression validators for fields
+            function validateName(name) {
+                const namePattern = /^[A-Za-z_]{3,}$/;
+                return namePattern.test(name);
+            }
+
+            function validateEmail(email) {
+                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return emailPattern.test(email);
+            }
+
+            function validatePhone(phone) {
+                const phonePattern = /^\d{10}$/;
+                return phonePattern.test(phone);
+            }
+
+            function validateFile(file) {
+                const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+                const maxSize = 5 * 1024 * 1024; // 5MB
+                if (file) {
+                    if (allowedTypes.indexOf(file.type) === -1) {
+                        return 'Only JPEG, PNG, and GIF images are allowed.';
+                    }
+                    if (file.size > maxSize) {
+                        return 'File size must be less than 5MB.';
+                    }
+                }
+                return '';  // No error
+            }
+
+            // Real-time validation for each field
+            $('#first_name').on('keyup blur', function () {
+                const firstName = $(this).val().trim();
+                $('#first_name_error').text(firstName === '' ? 'Enter a name for First Name.' :
+                    !validateName(firstName) ? 'Expect only letters or underscore, at least 3 characters.' : '');
+            });
+
+            $('#last_name').on('keyup blur', function () {
+                const lastName = $(this).val().trim();
+                $('#last_name_error').text(lastName === '' ? 'Enter a name for Last Name.' :
+                    !validateName(lastName) ? 'Expect only letters or underscore, at least 3 characters.' : '');
+            });
+
+            $('#email').on('keyup blur', function () {
+                const email = $(this).val().trim();
+                $('#email_error').text(email === '' ? 'Enter an email address.' :
+                    !validateEmail(email) ? 'Invalid Email format.' : '');
+            });
+
+            $('#phone').on('keyup blur', function () {
+                const phone = $(this).val().trim();
+                $('#phone_error').text(phone === '' ? 'Enter a phone number.' :
+                    !validatePhone(phone) ? 'Phone Number must be exactly 10 digits.' : '');
+            });
+
+            $('#dob').on('blur', function () {
+                const dob = $(this).val().trim();
+                const birthDate = new Date(dob);
+                const today = new Date();
+                let age = today.getFullYear() - birthDate.getFullYear();
+                const monthDiff = today.getMonth() - birthDate.getMonth();
+                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                    age--;
+                }
+                $('#dob_error').text(dob === '' ? 'Enter your Date of Birth.' :
+                    age < 18 ? 'You must be 18 years or older.' : '');
+            });
+
+            $('#gender').on('change', function () {
+                const gender = $('input[name="gender"]:checked').val();
+                $('#gender_error').text(gender === undefined ? 'Please select your gender.' : '');
+            });
+
+            $('input.languages').on('change', function () {
+                const languages = $('input.languages:checkbox:checked').length;
+                $('#languages_error').text(languages < 2 ? 'Please select at least two languages.' : '');
+            });
+
+            $('#profile_picture').on('change', function () {
+                const file = this.files[0];
+                const errorMessage = validateFile(file);
+                $('#file_error').text(errorMessage);
+            });
+
+            // Form submission handling
+            $('#editForm').on('submit', function (e) {
+                e.preventDefault();
+
+                let isValid = true;
+                const firstName = $('#first_name').val().trim();
+                const lastName = $('#last_name').val().trim();
+                const email = $('#email').val().trim();
+                const phone = $('#phone').val().trim();
+                const dob = $('#dob').val().trim();
+                const gender = $('input[name="gender"]:checked').val();
+                const languages = $('input.languages:checkbox:checked').length;
+                const file = $('#profile_picture')[0].files[0];
+
+                // Check validations
+                if (!firstName || !validateName(firstName)) isValid = false;
+                if (!lastName || !validateName(lastName)) isValid = false;
+                if (!email || !validateEmail(email)) isValid = false;
+                if (!phone || !validatePhone(phone)) isValid = false;
+                if (!dob || (new Date().getFullYear() - new Date(dob).getFullYear()) < 18) isValid = false;
+                if (!gender) isValid = false;
+                if (languages < 2) isValid = false;
+
+                const fileError = validateFile(file);
+                if (fileError) {
+                    $('#file_error').text(fileError);
+                    isValid = false;
+                }
+
+                if (isValid) {
+                    $('#general_error_message').text('');
+                    const formData = new FormData($("#editForm")[0]);
+                    $.ajax({
+                        url: "update.php", // PHP handler to save the updated profile
+                        method: "POST",
+                        data: formData,
+                        contentType: false,
+                        processData: false,
+                        success: function (response) {
+                            if (response.includes("success")) {
+                                alert("Profile updated successfully!");
+                                setTimeout(function () {
+                                    window.location.href = 'profile.php'; // Redirect to profile page
+                                }, 2000);
+                            } else {
+                                $('#general_error_message').text(response);
+                            }
+                        }
+                    });
+                } else {
+                    $('#general_error_message').text('Please fill in all fields correctly.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+<!--DASHBOARD-->
+<?php
+session_start();
+
+// Check if user is logged in
+if (!isset($_SESSION['email'])) {
+    header("Location: login-user.php");
+    exit();
+}
+
+// Database connection
+$conn = mysqli_connect('localhost', 'root', '', 'Example_database');
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid black;
+        }
+        h1 {
+            text-align: center;
+        }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+<body>
+    <h1>Display Data</h1>
+
+    <!-- Add the logout link/button -->
+   
+
+    <table style="background-color: lightgrey;">
+        <tr>
+            <th>ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Dob</th>
+            <th>Gender</th>
+            <th>Languages</th>
+			<th>File</th>
+            <th colspan="2">Action</th>
+        </tr>
+
+        <?php
+        $user_email = $_SESSION['email'];
+        $sql = "SELECT * FROM user_register WHERE email = '$user_email'";
+        $select = mysqli_query($conn, $sql);
+        while ($d = mysqli_fetch_assoc($select)) {
+        ?>
+            <tr class="main<?php echo $d['id']; ?>">
+                <td><?php echo $d['id']; ?></td>
+                <td><?php echo $d['first_name']; ?></td>
+                <td><?php echo $d['last_name']; ?></td>
+                <td><?php echo $d['email']; ?></td>
+                <td><?php echo $d['phone']; ?></td>
+                <td><?php echo $d['dob']; ?></td>
+                <td><?php echo $d['gender']; ?></td>
+                <td><?php echo $d['languages']; ?></td>
+				<td><img src="./folder_2/<?php echo $d['file']; ?>" style='height:50px;'></td>
+                <td><button class="edit" data-id="<?php echo $d['id']; ?>">Edit</button></td>
+				<td>
+                <a href="logout.php"><button>Logout</button></a>
+    </td>
+            </tr>
+        <?php
+        }
+        ?>
+    </table>
+
+    <div id="message" class="error"></div>
+
+    <script>
+        $(document).ready(function () {
+            // Edit functionality
+            $('.edit').click(function (ev) {
+                ev.preventDefault();
+                var id = $(this).data('id');
+
+                $.ajax({
+                    type: "POST",
+                    url: "user-update.php",
+                    data: { id: id },
+                    success: function (response) {
+                        // Replace current content with update form
+                        $('body').html(response);
+                    },
+                    error: function (xhr, status, error) {
+                        alert("Error loading update form. Please try again.");
+                    }
+                });
+            });
+        });
+    </script>
+</body>
