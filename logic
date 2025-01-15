@@ -1,0 +1,420 @@
+<?php
+session_start();
+
+// Check if user is logged in
+if (!isset($_SESSION['email'])) {
+    header("Location:../login.php");
+    exit();
+}
+
+// Database connection
+$conn = mysqli_connect('localhost', 'root', '', 'example_database');
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+}
+?>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin dashboard</title>
+    <!-- SweetAlert CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <!-- SweetAlert JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="responsive.css">
+    <style>
+        #registerForm {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 60%;
+            justify-content: center;
+            height: 40%;
+            margin-top: 10%;
+            margin-left: 10%;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        input[type="text"], input[type="email"], input[type="date"], input[type="password"], button,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .error {
+            color: red;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .gender,
+        .languages {
+            margin-right: 10px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+            display: inline-block;
+        }
+
+        #general_error_message {
+            text-align: center;
+            font-weight: bold;
+            color: red;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <?php
+    include('header.php');
+    ?>
+    <!-- for header part -->
+
+    <div class="main-container">
+
+        <?php include('sidebar.php'); ?>
+
+        <form id="registerForm" enctype="multipart/form-data">
+            <div id="Register-data"></div>
+
+            <h2>Create Package</h2>
+            <input type="text" id="Package_name" name="Package_name" placeholder="Enter Package Name"><br>
+            <span id="Package_name_error" class="error"></span><br>
+
+            <input type="text" id="package_days" name="package_days" placeholder="Package Days"><br>
+            <span id="package_days_error" class="error"></span><br>
+
+            <textarea id="Package_description" name="Package_description" placeholder="Package Description"></textarea><br>
+            <span id="Package_description_error" class="error"></span><br>
+
+            <input type="text" id="Package_price" name="Package_price" placeholder="Package Price">
+            <span id="Package_price_error" class="error"></span><br>
+
+            <label>Thumbnail Picture:</label>
+            <input type="file" id="profile_picture" name="profile_picture"><br>
+            <span id="file_error" class="error"></span>
+
+            <label>Multi Picture</label>
+            <input type="file" id="multiple_pic" name="multiple_pic[]" multiple>
+            <span id="multiple_pic_error" class="error"></span><br>
+
+            <button type="submit">Create Package</button>
+            <div id="general_error_message" class="error"></div>
+        </form>
+
+    </div>
+
+    <script>
+      $(document).ready(function () {
+
+    // Regular expression validators for fields
+    function validatepackage(package_name) {
+        const packagePattern = /^[A-Z a-z_]{3,}$/;
+        return packagePattern.test(package_name);
+    }
+
+    function validatedays(package_days) {
+        const packagedaysPattern = /^\d{1,3}$/; // Expect up to 3 digits
+        return packagedaysPattern.test(package_days);
+    }
+
+    function validatepackageprice(package_price) {
+        const packagepricePattern = /^\d+(\.\d{1,2})?$/; // Allow decimal point for price
+        return packagepricePattern.test(package_price);
+    }
+
+    // File validation
+    function validateFile(file) {
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg', 'image/jfif'];
+        const maxSize = 5 * 1024 * 1024; // 5MB
+        if (file) {
+            if (allowedTypes.indexOf(file.type) === -1) {
+                return 'Only JPEG, PNG, and GIF images are allowed.';
+            }
+            if (file.size > maxSize) {
+                return 'File size must be less than 5MB.';
+            }
+        }
+        return '';  // No error
+    }
+
+    // Multiple files validation
+    function validatemultiplepic(files) {
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg', 'image/jfif'];
+        const maxSize = 5 * 1024 * 1024; // 5MB
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            if (allowedTypes.indexOf(file.type) === -1) {
+                return 'Only JPEG, PNG, and GIF images are allowed for additional files.';
+            }
+            if (file.size > maxSize) {
+                return 'Each additional file must be less than 5MB.';
+            }
+        }
+        return '';  // No error
+    }
+
+    // Real-time validation
+    $('#Package_name').on('keyup blur', function () {
+        const Package_name = $(this).val().trim();
+        $('#Package_name_error').text(Package_name === '' ? 'Enter Package name.' :
+            !validatepackage(Package_name) ? 'Expect only letters or underscore, at least 3 characters.' : '');
+    });
+
+    $('#package_days').on('keyup blur', function () {
+        const package_days = $(this).val().trim();
+        $('#package_days_error').text(package_days === '' ? 'Enter Package days.' :
+            !validatedays(package_days) ? 'Package days should be numbers.' : '');
+    });
+
+    $('#Package_description').on('keyup blur', function () {
+        const Package_description = $(this).val().trim();
+        $('#Package_description_error').text(Package_description === '' ? 'Enter Package description.' :
+            !validatepackage(Package_description) ? 'Expect only letters or underscore, at least 3 characters.' : '');
+    });
+
+    $('#Package_price').on('keyup blur', function () {
+        const Package_price = $(this).val().trim();
+        $('#Package_price_error').text(Package_price === '' ? 'Enter Package price.' :
+            !validatepackageprice(Package_price) ? 'Invalid price format.' : '');
+    });
+
+    // File upload validation
+    $('#profile_picture').on('change', function () {
+        const file = this.files[0];
+        const errorMessage = validateFile(file);
+        $('#file_error').text(errorMessage);
+    });
+
+    // Additional file upload validation
+    $('#multiple_pic').on('change', function () {
+        const files = this.files;
+        const errorMessage = validatemultiplepic(files);
+        $('#multiple_pic_error').text(errorMessage);
+    });
+
+    // Form submission handling
+    $('#registerForm').on('submit', function (e) {
+        e.preventDefault();
+
+        let isValid = true;
+        const Packagename = $('#Package_name').val().trim();
+        const packagedays = $('#package_days').val().trim();
+        const Packageprice = $('#Package_price').val().trim();
+        const file = $('#profile_picture')[0].files[0];
+        const multiplepic = $('#multiple_pic')[0].files;
+
+        // Check validations
+        if (!Packagename || !validatepackage(Packagename)) isValid = false;
+        if (!packagedays || !validatedays(packagedays)) isValid = false;
+        if (!Packageprice || !validatepackageprice(Packageprice)) isValid = false;
+
+        // Check if profile picture is selected
+        if (!file) {
+            $('#file_error').text('Choose File.');
+            isValid = false;
+        } else {
+            const fileError = validateFile(file);
+            if (fileError) {
+                $('#file_error').text(fileError);
+                isValid = false;
+            }
+        }
+
+        // Check if multiple pictures are selected
+        if (multiplepic.length === 0) {
+            $('#multiple_pic_error').text('Choose File.');
+            isValid = false;
+        } else {
+            const multiple_pic_error = validatemultiplepic(multiplepic);
+            if (multiple_pic_error) {
+                $('#multiple_pic_error').text(multiple_pic_error);
+                isValid = false;
+            }
+        }
+
+        if (isValid) {
+            $('#general_error_message').text('');
+            const formData = new FormData($("#registerForm")[0]);
+            $.ajax({
+                url: "package-backend.php",  // Your PHP handler for file and form data
+                method: "POST",
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    var data = JSON.parse(response);
+                    if (data.success === true) {
+                        // Show SweetAlert
+                        Swal.fire({
+                            title: 'Success!',
+                            text: 'Package Created Successfully.',
+                            icon: 'success',
+                            timer: 4000, // 4 seconds
+                            timerProgressBar: true,
+                            willClose: () => {
+                                window.location.href = 'admin-dashboard.php';
+                            }
+                        });
+                    } else {
+                        $('#general_error_message').text(data.msg || 'An error occurred.');
+                    }
+                },
+            });
+        } else {
+            $('#general_error_message').text('Please fill in all fields correctly.');
+        }
+    });
+});
+    </script>
+</body>
+
+</html>
+<?php
+$first_name = $last_name = $email = $phone = $dob = $password = $gender = $languages = "";
+$connection = mysqli_connect('localhost', 'root', '', 'example_database');
+$return_array = array();
+$imageErr = "";  // Variable to store error messages for file upload
+
+// Check if the connection was successful
+if (!$connection) {
+    die("Connection failed: " . mysqli_connect_error());
+}
+
+if (isset($_POST['Package_name'], $_POST['package_days'], $_POST['Package_description'], $_POST['Package_price'])) {
+
+    $Package_name = $_POST['Package_name'];
+    $package_days = $_POST['package_days'];
+    $Package_description = $_POST['Package_description'];
+    $Package_price = $_POST['Package_price'];
+    
+    if (!empty($Package_name) && !empty($Package_description) && !empty($Package_price)) {
+
+        // File Upload 
+        if (isset($_FILES['profile_picture'])) {
+            $file_name = $_FILES['profile_picture']['name'];
+            $file_tmp = $_FILES['profile_picture']['tmp_name'];
+            $file_size = $_FILES['profile_picture']['size'];
+            $upload = pathinfo($file_name, PATHINFO_EXTENSION);
+            $allowed_extensions = array('jpg', 'png', 'gif', 'jfif', 'jpeg');
+
+            if ($file_size > 2097152) {
+                $imageErr = "*File size is too large. Maximum 2MB allowed.";
+            } elseif (!in_array($upload, $allowed_extensions)) {
+                $imageErr = "*Only jpg, png, gif, jpeg, jfif files are allowed";
+            } else {
+                $folder = "thumbnail-pic/" . basename($file_name); // Use basename to avoid directory traversal
+                if (move_uploaded_file($file_tmp, $folder)) {
+                    // File upload successful
+                } else {
+                    $imageErr = "*Failed to upload file";
+                }
+            }
+        }
+
+        // File Upload Logic for Additional Files
+        $multiple_pic_err = "";
+        $multiple_pic_names = [];
+
+        if (isset($_FILES['multiple_pic'])) {
+            $multiple_pic = $_FILES['multiple_pic'];
+            $allowed_extensions = array('jpg', 'png', 'gif', 'jfif', 'jpeg');
+            $max_size = 5 * 1024 * 1024; // Max size 5MB
+
+            foreach ($multiple_pic['name'] as $key => $value) {
+                $file_name = $multiple_pic['name'][$key];
+                $file_tmp = $multiple_pic['tmp_name'][$key];
+                $file_size = $multiple_pic['size'][$key];
+                $upload = pathinfo($file_name, PATHINFO_EXTENSION);
+
+                if ($file_size > $max_size) {
+                    $multiple_pic_err = "*File size is too large for one or more files. Maximum 5MB allowed.";
+                    break;
+                } elseif (!in_array($upload, $allowed_extensions)) {
+                    $multiple_pic_err = "*Only jpg, png, gif, jpeg, jfif files are allowed for additional files.";
+                    break;
+                } else {
+                    $multiple_pic_path = "multiple-pic/" . $file_name; // Corrected variable name here
+                    if (move_uploaded_file($file_tmp, $multiple_pic_path)) {
+                        $multiple_pic_names[] = $file_name;
+                    } else {
+                        $multiple_pic_err = "*Failed to upload one or more additional files.";
+                        break;
+                    }
+                }
+            }
+        }
+
+        // Check for errors before inserting into the database
+        if (empty($imageErr) && empty($multiple_pic_err)) {
+            // Use prepared statements to prevent SQL injection
+            $profile_picture = $file_name;
+            $multiple_pic = implode(',', $multiple_pic_names); // Corrected the variable name here
+
+            // Check if the connection is valid and prepare statement
+            $stmt = $connection->prepare("INSERT INTO package (Package_name, package_days, Package_description, Package_price, thumbnail, multiimages) VALUES (?, ?, ?, ?, ?, ?)");
+            if ($stmt === false) {
+                // If preparation failed, output the error and stop
+                die('MySQL prepare failed: ' . $connection->error);
+            }
+
+            // Debugging: output the statement for verification
+        //    echo 'Prepared Statement: ' . $stmt . '<br>';
+
+            // Bind parameters to the prepared statement
+            $stmt->bind_param("ssssss", $Package_name, $package_days, $Package_description, $Package_price, $profile_picture, $multiple_pic);
+
+            // Execute the prepared statement
+            if ($stmt->execute()) {
+                $return_array['success'] = true;
+            } else {
+                $return_array['success'] = false;
+                $return_array['msg'] = 'Failed to insert package: ' . $stmt->error;
+            }
+            $stmt->close();
+        } else {
+            $return_array['success'] = false;
+            $return_array['msg'] = $imageErr; // Return the error message for file upload
+        }
+    } else {
+        $return_array['success'] = false;
+        $return_array['msg'] = 'Please fill the form completely.';
+    }
+} else {
+    $return_array['success'] = false;
+    $return_array['msg'] = 'Invalid request.';
+}
+
+//header('Content-Type: application/json'); // Set the content type to JSON
+echo json_encode($return_array); // Return the response as JSON
+?>
