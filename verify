@@ -454,3 +454,27 @@ if (!isset($_SESSION["user_id"])) {
 
 </body>
 </html>
+/************** DATABASE AND TABLE *******************/
+
+CREATE DATABASE php_login;
+
+USE php_login;
+
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(150) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    otp VARCHAR(6) DEFAULT NULL
+);
+
+INSERT INTO users
+(name, email, password, otp)
+VALUES
+(
+    'John Doe',
+    'john@example.com',
+    '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC0e2D2e8k0G9M6J6S5a',
+    '123456'
+);
+
